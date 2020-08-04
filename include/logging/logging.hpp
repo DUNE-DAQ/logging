@@ -23,6 +23,36 @@
 							 "d40", "d41", "d42", "d43", "d44", "d45", "d46", "d47", "d48", "d49", \
 							 "d50", "d51", "d52", "d53", "d54", "d55", "d56", "d57", "d58"
 #include "TRACE/trace.h"
+#include <stdlib.h>				// setenv
+
+/**
+ * @brief The Logger class defines the interface necessary to configure central
+ * logging within a DAQ Application.
+ */
+class Logger
+{
+public:
+  /**
+   * @brief Setup the Logger service
+   * @param args Command-line arguments used to setup the Logger
+   */
+	static void setup(const std::vector<std::string> & args __attribute__((__unused__)) = {})
+	{
+		// need to get tricky to short circuit DEBUG message (at "level 1") about
+		//    libmtsStreams.so: cannot open shared object file: No such file or directory
+		setenv("TDAQ_ERS_DEBUG_LEVEL","63",0);
+		setenv("TDAQ_ERS_FATAL", "lstderr",0);
+		setenv("TDAQ_ERS_ERROR", "throttle(30,100),lstderr",0);
+		setenv("TDAQ_ERS_WARNING","throttle(30,100),lstderr",0);
+		setenv("TDAQ_ERS_INFO",   "lstdout",0);
+		setenv("TDAQ_ERS_LOG",    "lstdout",0);
+		setenv("TDAQ_ERS_DEBUG",  "lstdout",0);
+	}
+};
+
+
+
+
 
 
 #undef TLVL_ERROR
@@ -49,7 +79,6 @@ static void verstrace_user(struct timeval *, int TID, uint8_t lvl, const char* i
 	const char *outp;
 	char   obuf[TRACE_USER_MSGMAX];
 
-	printf("here lvl=%u\n",lvl);
 	if ((insert && (printed = strlen(insert))) || nargs)
 	{
 		/* check insert 1st to make sure printed is set */
