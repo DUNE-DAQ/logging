@@ -155,6 +155,81 @@ static void erstrace_user(struct timeval *tvp, int TID, uint8_t lvl, const char*
 
 
 
+// The following allow an ers::Issue to be streamed into LOG_DEBUG(N)
+inline TraceStreamer& operator<<(TraceStreamer& x, const ers::Issue &r)
+{
+	//assert(x.lvl_ == TLVL_WARING)
+	if (x.do_m) {
+		x.line_ = r.context().line_number();
+		x.msg_append(r.message().c_str());
+	}
+	if (x.lvl_ == TLVL_WARNING) ers::warning( r );
+	else                        ers::info( r );
+	x.do_s = 0;
+	return x;
+}
+
+#undef ERS_DECLARE_ISSUE_BASE_HPP
+#define ERS_DECLARE_ISSUE_BASE_HPP( namespace_name, class_name, base_class_name, message_, base_attributes, attributes ) \
+        __ERS_DECLARE_ISSUE_BASE__( namespace_name, class_name, base_class_name, ERS_EMPTY message_, ERS_EMPTY base_attributes, ERS_EMPTY attributes )\
+		static inline TraceStreamer& operator<<(TraceStreamer& x, const namespace_name::class_name &r) \
+		{if (x.do_m)   { x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );} \
+		 switch(x.lvl_){\
+			 /*case TLVL_ERROR:   ers::error(   r ); x.do_s = 0; break;*/ \
+		 case TLVL_WARNING: ers::warning( r ); x.do_s = 0; break;	\
+		 case TLVL_INFO:    ers::info(    r ); x.do_s = 0; break;	\
+		 case TLVL_DEBUG:   ers::log(     r ); x.do_s = 0; break;	\
+		 case TLVL_TRACE:   ers::debug(   r ); x.do_s = 0; break;	\
+		 default:           ers::debug(   r ); x.do_s = 0; break;	\
+		 }\
+		 return x; \
+		}
+
+
+
+
+namespace {  // unnamed namespace (i.e. static (for each compliation unit only))
+
+	struct ErsFatalStreamer
+	{
+		inline ErsFatalStreamer &operator<<(const ers::Issue &r)
+		{
+			ers::fatal( r );
+			return *this;
+		}
+	};  // struct ErsFatalStreamer
+
+	struct ErsErrorStreamer
+	{
+		inline ErsErrorStreamer &operator<<(const ers::Issue &r)
+		{
+			ers::error( r );
+			return *this;
+		}
+	};  // struct ErsErrorStreamer
+
+	struct ErsWarningStreamer
+	{
+		//ErsWarningStreamer( ers::LocalContext c ) : _ctx(c) {}
+		//ers::LocalContext _ctx;
+		inline ErsWarningStreamer &operator<<(const ers::Issue &r)
+		{
+			// would be nice of the "context" could be created from the streamer instance
+			ers::warning( r );
+			return *this;
+		}
+	};  // struct ErsWarningStreamer
+
+}  // namespace ""
+
+
+
+
+#define LOG_FATAL()   ErsFatalStreamer()
+#define LOG_ERROR()   ErsErrorStreamer()
+#define LOG_WARNING() ErsWarningStreamer()
+
+
 
 #define LOG0()              
 #define LOG1(value)            value,
