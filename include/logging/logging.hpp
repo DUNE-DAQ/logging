@@ -88,22 +88,22 @@ static void verstrace_user(struct timeval *, int TID, uint8_t lvl, const char* i
 	}
 	// LocalContext args: 1-"package_name" 2-"file" 3-"line" 4-"pretty_function" 5-"include_stack"
 	ers::LocalContext lc( traceNamLvls_p[TID].name, file, line, function, DEBUG_FORCED );
-	std::ostringstream ers_report_impl_out_buffer;
-	ers_report_impl_out_buffer << outp;
+	//std::ostringstream ers_report_impl_out_buffer;
+	//ers_report_impl_out_buffer << outp;
 	switch (static_cast<lvl_t>(lvl))
 	{
 	case lvl_t::TLVL_INFO:
-		ers::info( ers::Message( lc, ers_report_impl_out_buffer.str() )	\
+		ers::info( ers::Message( lc, outp )	\
 		         BOOST_PP_COMMA_IF( BOOST_PP_NOT( ERS_IS_EMPTY( ERS_EMPTY ERS_EMPTY ) ) ) ERS_EMPTY ); \
 		break;
  	case lvl_t::TLVL_LOG:
-		ers::log( ers::Message( lc, ers_report_impl_out_buffer.str() )	\
+		ers::log( ers::Message( lc, outp )	\
 		         BOOST_PP_COMMA_IF( BOOST_PP_NOT( ERS_IS_EMPTY( ERS_EMPTY ERS_EMPTY ) ) ) ERS_EMPTY ); \
 		break;
 	default:
 		//lvl -=2 ;
 		if ( ers::debug_level() >= lvl )
-			ers::debug( ers::Message( lc, ers_report_impl_out_buffer.str() ) \
+			ers::debug( ers::Message( lc, outp ) \
 			           BOOST_PP_COMMA_IF( BOOST_PP_NOT( ERS_IS_EMPTY( ERS_EMPTY lvl ) ) ) lvl ); \
 		break;
 	}

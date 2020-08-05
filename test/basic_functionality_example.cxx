@@ -2,6 +2,10 @@
   cd build/logging
   make clean basic_functionality_example CXX_DEFINES=-DTRY_COMPILE=0
   test/basic_functionality_example
+  or
+  TDAQ_ERS_VERBOSITY_LEVEL=2 test/basic_functionality_example
+  or
+  TRACE_LVLS=-1 test/basic_functionality_example
  */
 
 #define TRACE_NAME "basic_functionality_example" // next version (after v3_15_09) will do this automatically
