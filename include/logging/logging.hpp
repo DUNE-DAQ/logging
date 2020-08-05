@@ -8,6 +8,12 @@
 #ifndef LOGGING_INCLUDE_LOGGING_LOGGER_HPP_
 #define LOGGING_INCLUDE_LOGGING_LOGGER_HPP_
 
+#if !defined(TDAQ_PACKAGE_NAME) && defined(TRACE_NAME)
+#	define TDAQ_PACKAGE_NAME TRACE_NAME
+#elif !defined(TRACE_NAME) && defined(TDAQ_PACKAGE_NAME)
+#	define TRACE_NAME TDAQ_PACKAGE_NAME
+#endif
+
 #include "ers/ers.h"
 #include <ers/OutputStream.h>
 #define TRACE_LOG_FUN_PROTO \

@@ -4,9 +4,8 @@
   test/basic_functionality_example
  */
 
-#include <logging/logging.hpp>
-
 #define TRACE_NAME "basic_functionality_example" // next version (after v3_15_09) will do this automatically
+#include <logging/logging.hpp>
 
 /** \def ers::File This is the base class for all file related issues.
 */
