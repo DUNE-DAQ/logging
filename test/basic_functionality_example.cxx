@@ -25,11 +25,11 @@ ERS_DECLARE_ISSUE_BASE_HPP(ers,	// namespace
                            ERS_EMPTY				   // no attributes in this class
                            )
 
-void ex_thread( int *spinlock )
+void ex_thread( volatile int *spinlock, unsigned thread_idx )
 {
 	while(*spinlock);
 	for (unsigned uu=0; uu<5; ++uu)
-		LOG_DEBUG(d08) << "fast "<<uu;
+		LOG_DEBUG(d08) << "tidx " << thread_idx << " fast "<<uu;
 }
 
 
@@ -74,12 +74,25 @@ int main(int argc, char *argv[])
 	LOG_DEBUG(d08,"TEST2") << "testing name argument";
 
 	std::cout << "\ntshow follows:\n\n";
-	system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %n %l %R %m\" trace_cntl show | trace_delta -ct 1 -d 1" );
+	system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %e %l %R %m\" trace_cntl show | trace_delta -ct 1 -d 1" );
 
 	std::cout << "\nOne could try the same with TDAQ_ERS_VERBOSITY_LEVEL=2 or 3\n";
 
+	std::cout << "\nNow, fast multithread...\n";
+	const int num_threads=5;
+	std::thread threads[num_threads];
+	int spinlock=1;
+	for (unsigned uu=0; uu<num_threads; ++uu)
+		threads[uu] = std::thread(ex_thread,&spinlock,uu);
 
+	usleep(20000);
+	spinlock = 0;
 
+	for (unsigned uu=0; uu<num_threads; ++uu)
+		threads[uu].join();
+
+	std::cout << "\ntshow follows:\n\n";
+	system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %e %l %R %m\" trace_cntl show -c 25 | trace_delta -ct 1 -d 1" );
 
 	return (0);
 }   // main
