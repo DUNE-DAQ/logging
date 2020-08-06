@@ -259,14 +259,22 @@ public:
 	static void setup(const std::vector<std::string> & args __attribute__((__unused__)) = {})
 	{
 		// need to get tricky to short circuit DEBUG message (at "level 1") about
-		//    libmtsStreams.so: cannot open shared object file: No such file or directory
+		//    libmtsStreams.so: cannot open shared object file: No such file or directory		
 		setenv("TDAQ_ERS_FATAL", "erstrace,lstderr",0);
 		setenv("TDAQ_ERS_ERROR", "erstrace,throttle(30,100),lstderr",0);
 		setenv("TDAQ_ERS_WARNING","erstrace,throttle(30,100),lstderr",0);
 		setenv("TDAQ_ERS_INFO",   "lstdout",0);
 		setenv("TDAQ_ERS_LOG",    "lstdout",0);
 		setenv("TDAQ_ERS_DEBUG",  "lstdout",0);
-		setenv("TDAQ_ERS_DEBUG_LEVEL","63",0);
+		//setenv("TDAQ_APPLICATION_NAME","XYZZY",0);
+
+		// Avoid DEBUG_1 [ers::PluginManager::PluginManager(...) at ...Library mtsStreams can not be loaded because libmtsStreams.so: cannot open shared object file: No such file or directory
+		// by only setting debug_level AFTER first ers::debug message
+		//setenv("TDAQ_ERS_DEBUG_LEVEL","63",0);
+		ers::LocalContext lc( "unknown", __FILE__, __LINE__, __func__, 0/*no_stack*/ );
+		int lvl=1;
+		ers::debug(ers::Message(lc,"hello") BOOST_PP_COMMA_IF( BOOST_PP_NOT( ERS_IS_EMPTY(ERS_EMPTY lvl) ) ) lvl);
+		ers::Configuration::instance().debug_level(63);
 	}
 };
 

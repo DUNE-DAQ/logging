@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
 	LOG_DEBUG(d07) << ers::CantOpenFile(ERS_HERE,"My_d07_FileName");
 
 	LOG_DEBUG(d08,"TEST2") << "testing name argument";
+	LOG_DEBUG(d63) << "debug lvl 63";
 
 	std::cout << "\ntshow follows:\n\n";
 	system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %e %l %R %m\" trace_cntl show | trace_delta -ct 1 -d 1" );
