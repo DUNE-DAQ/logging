@@ -1,3 +1,10 @@
+/**
+ * @file logger.hpp logger interface definition
+ *
+ * This is part of the DUNE DAQ Application Framework, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
+ */
 /*
   cd build/logging
   make clean basic_functionality_example CXX_DEFINES=-DTRY_COMPILE=0
@@ -9,7 +16,7 @@
  */
 
 #define TRACE_NAME "basic_functionality_example" // next version (after v3_15_09) will do this automatically
-#include <logging/logging.hpp>
+#include <logging/Logger.hpp>
 
 /** \def ers::File This is the base class for all file related issues.
 */
@@ -29,10 +36,12 @@ ERS_DECLARE_ISSUE_BASE_HPP(ers,	// namespace
                            ERS_EMPTY				   // no attributes in this class
                            )
 
-void ex_thread( volatile int *spinlock, unsigned thread_idx )
+void ex_thread( volatile const int *spinlock, int thread_idx )
 {
-	while(*spinlock);
-	for (unsigned uu=0; uu<5; ++uu)
+	while(*spinlock);			// The main program thread will clear this
+								// once all thread are created and given a
+								// chance to get here.
+	for (auto uu=0; uu<5; ++uu)
 		LOG_DEBUG(d08) << "tidx " << thread_idx << " fast "<<uu;
 }
 
@@ -87,7 +96,7 @@ int main(int argc, char *argv[])
 	const int num_threads=5;
 	std::thread threads[num_threads];
 	int spinlock=1;
-	for (unsigned uu=0; uu<num_threads; ++uu)
+	for (int uu=0; uu<num_threads; ++uu)
 		threads[uu] = std::thread(ex_thread,&spinlock,uu);
 
 	usleep(20000);
