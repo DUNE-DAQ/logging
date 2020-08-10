@@ -87,12 +87,12 @@ public:
 // The following Stream macros a) accept strings or Issue objects, and b) ignore and accept optional
 // arguments
 #define LOG_LOG(...)  TRACE_STREAMER(static_cast<int>(lvl_t::TLVL_LOG), \
-										  _tlog_ARG2(not_used, CHOOSE(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
-										  _tlog_ARG3(not_used, CHOOSE(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
+										  _tlog_ARG2(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
+										  _tlog_ARG3(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
 										  1, SL_FRC(static_cast<int>(lvl_t::TLVL_LOG)) )
 #define LOG_INFO(...) TRACE_STREAMER(static_cast<int>(lvl_t::TLVL_INFO), \
-										  _tlog_ARG2(not_used, CHOOSE(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
-										  _tlog_ARG3(not_used, CHOOSE(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
+										  _tlog_ARG2(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
+										  _tlog_ARG3(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
 										  1, SL_FRC(static_cast<int>(lvl_t::TLVL_INFO)) )
 
 //  The following uses gnu extension of "##" connecting "," with empty __VA_ARGS__
