@@ -230,10 +230,10 @@ ERS_REGISTER_OUTPUT_STREAM( ers::erstraceStream, "erstrace", ERS_EMPTY )    // l
 #define COMMA_IF_PARENS(...)  ,
 #define LPAREN                (
 #define EXPAND(...)           __VA_ARGS__
-#define CHOOSE(...)           EXPAND(LOG_  LPAREN \
+#define CHOOSE(...)           EXPAND(LOG__  LPAREN \
 									 __VA_ARGS__ COMMA_IF_PARENS __VA_ARGS__ COMMA_IF_PARENS __VA_ARGS__ (), \
 									 LOG2_, impossible, LOG2_, LOG1_, LOG0_, LOG1_, ))
-#define LOG_(a0, a1, a2, a3, a4, a5, arg, ...) arg
+#define LOG__(a0, a1, a2, a3, a4, a5, arg, ...) arg
 #define _tlog_ARG2( a1,a2,...)    tlog_ARG2(a1,a2,__VA_ARGS__)
 #define _tlog_ARG3( a1,a2,a3,...) tlog_ARG3(a1,a2,a3,__VA_ARGS__)
 
