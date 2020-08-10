@@ -224,15 +224,15 @@ ERS_REGISTER_OUTPUT_STREAM( ers::erstraceStream, "erstrace", ERS_EMPTY )    // l
 // Support macros
 #define SL_FRC(lvl) ((lvl)==0 || (lvl)==1)
 
-#define LOG0()              
-#define LOG1(value)            value,
-#define LOG2(value, value1)    value , value1,
+#define LOG0_()              
+#define LOG1_(value)            value,
+#define LOG2_(value, value1)    value , value1,
 #define COMMA_IF_PARENS(...)  ,
 #define LPAREN                (
 #define EXPAND(...)           __VA_ARGS__
 #define CHOOSE(...)           EXPAND(LOG_  LPAREN \
 									 __VA_ARGS__ COMMA_IF_PARENS __VA_ARGS__ COMMA_IF_PARENS __VA_ARGS__ (), \
-									 LOG2, impossible, LOG2, LOG1, LOG0, LOG1, ))
+									 LOG2_, impossible, LOG2_, LOG1_, LOG0_, LOG1_, ))
 #define LOG_(a0, a1, a2, a3, a4, a5, arg, ...) arg
 #define _tlog_ARG2( a1,a2,...)    tlog_ARG2(a1,a2,__VA_ARGS__)
 #define _tlog_ARG3( a1,a2,a3,...) tlog_ARG3(a1,a2,a3,__VA_ARGS__)
