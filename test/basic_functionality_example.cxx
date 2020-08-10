@@ -17,24 +17,34 @@
 
 #define TRACE_NAME "basic_functionality_example" // next version (after v3_15_09) will do this automatically
 #include <logging/Logger.hpp>
+#include <ers/Issue.h>
 
 /** \def ers::File This is the base class for all file related issues.
 */
-ERS_DECLARE_ISSUE_HPP(ers,		// namespace
-					  File,		// issue class name
+ERS_DECLARE_ISSUE(ers,		// namespace
+					  File2,		// issue class name
 					  ERS_EMPTY, // no message
 					  ((const char *)file_name ) // single attribute
                       )
 /** \def ers::CantOpenFile This issue is reported when a certain file can
 * not be opened by any reason.
 */
-ERS_DECLARE_ISSUE_BASE_HPP(ers,	// namespace
-                           CantOpenFile, // issue class name
-                           ers::File,	 // base class name
+ERS_DECLARE_ISSUE_BASE(ers,	// namespace
+                           CantOpenFile2, // issue class name
+                           ers::File2,	 // base class name
                            "Can not open \"" << file_name << "\" file", // message
                            ((const char *)file_name ), // base class attributes
                            ERS_EMPTY				   // no attributes in this class
                            )
+
+ERS_DECLARE_ISSUE(appframework, // namespace
+                      CommandNotRegistered2, // issue class name
+                      "Command '" << command_name
+                      << "' does not have an entry in the CommandOrderMap!"
+                      << " UserModules will receive this command in an unspecified order!",
+                      ((const char *)command_name ) // single attribute
+                      )
+
 
 void ex_thread( volatile const int *spinlock, int thread_idx )
 {
@@ -57,32 +67,30 @@ int main(int argc, char *argv[])
 	TRACE_CNTL("reset");
 
 	Logger().setup(arguments);
-	LOG_INFO() << "The Logger has just been setup and this is the first Info log message (LOG_INFO).";
+	LOG_INFO() << "The Logger has just been setup and this is am Info log message (LOG_INFO).";
+	LOG_INFO() << ers::Message(ERS_HERE,"A LOG_INFO using ers::Message - The Logger has just been setup.");
 
-//ers::error( ers::Message( ERS_HERE, "this is ers::error( ers::Message( ERS_HERE, \"this is ...\" ) )" ) );
+	//----------------------------------------
 
-	LOG_FATAL() << ers::CantOpenFile(ERS_HERE,"My_Fatal_FileName");
-	LOG_ERROR() << ers::CantOpenFile(ERS_HERE,"My_Error_FileName");
+	LOG_FATAL() << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName - usually assiated with throw or exit");
+	//ers::error( ers::Message( ERS_HERE, "this is ers::error( ers::Message( ERS_HERE, \"this is ...\" ) )" ) );
+	LOG_ERROR() << ers::CantOpenFile2(ERS_HERE,"My_Error_FileName");
 #   if TRY_COMPILE & 0x1
 	// see what happens with: make clean install CXX_DEFINES=-DTRY_COMPILE=1
 	LOG_ERROR() << "error with just a string";
 #   endif
-	LOG_WARNING() << ers::CantOpenFile(ERS_HERE,"My_Warn_FileName");
+	LOG_WARNING() << ers::CantOpenFile2(ERS_HERE,"My_Warn_FileName");
 	LOG_WARNING(ignore) << ers::Message(ERS_HERE,"My_Warn_Message with ignored macro param");
 
+	//----------------------------------------
 
-	LOG_INFO() << "info uses ers::Message";
-#   if TRY_COMPILE & 0x2
-	// see what happens with: make clean install CXX_DEFINES=-DTRY_COMPILE=2
-	LOG_INFO() << ers::Message(ERS_HERE,"a specific TraceStreamer method with ers::Message isn't defined.");
-#   endif
-	LOG_LOG()  << "LOG_LOG also uses ers::Message";
-	LOG_LOG("TEST1")  << ers::CantOpenFile(ERS_HERE,"My_Log_FileName");
+	LOG_INFO("TEST1") << ers::Message(ERS_HERE,"a specific TraceStreamer method with ers::Message isn't defined.");
+	LOG_LOG("TEST1")  << appframework::CommandNotRegistered2(ERS_HERE,"MyCommand");
 
 	LOG_DEBUG(d00) << "hello - debug level 0 mapped to 5";
 	LOG_DEBUG(d05) << "hello - debug level 5";
 	LOG_DEBUG(d06) << "hello - debug level 6";
-	LOG_DEBUG(d07) << ers::CantOpenFile(ERS_HERE,"My_d07_FileName");
+	LOG_DEBUG(d07) << ers::CantOpenFile2(ERS_HERE,"My_d07_FileName");
 
 	LOG_DEBUG(d08,"TEST2") << "testing name argument";
 	LOG_DEBUG(d63) << "debug lvl 63";

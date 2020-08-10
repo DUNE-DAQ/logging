@@ -44,22 +44,6 @@ enum class lvl_t { TLVL_FATAL,TLVL_ERROR,TLVL_WARNING,TLVL_INFO,TLVL_LOG,TLVL_DE
 #include <logging/detail/Logger.hxx> // needs TLVL_* definitions
 
 
-#undef ERS_DECLARE_ISSUE_BASE_HPP
-#define ERS_DECLARE_ISSUE_BASE_HPP( namespace_name, class_name, base_class_name, message_, base_attributes, attributes ) \
-        __ERS_DECLARE_ISSUE_BASE__( namespace_name, class_name, base_class_name, ERS_EMPTY message_, ERS_EMPTY base_attributes, ERS_EMPTY attributes )\
-		static inline TraceStreamer& operator<<(TraceStreamer& x, const namespace_name::class_name &r) \
-		{if (x.do_m)   { x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );} \
-		 switch(static_cast<lvl_t>(x.lvl_)){							\
-		 /*case TLVL_ERROR:   ers::error(   r ); x.do_s = 0; break;*/ \
-		 /*case lvl_t::TLVL_WARNING: ers::warning( r ); x.do_s = 0; break;*/ \
-		 case lvl_t::TLVL_INFO:    ers::info(    r ); x.do_s = 0; break;	\
-		 case lvl_t::TLVL_LOG:     ers::log(     r ); x.do_s = 0; break;	\
-		 default:                  ers::debug(   r,x.lvl_ ); x.do_s = 0; break; \
-		 }																\
-		 return x; \
-		}
-
-
 /**
  * @brief The Logger class defines the interface necessary to configure central
  * logging within a DAQ Application.
@@ -99,16 +83,19 @@ public:
 #define LOG_FATAL(...)   ErsFatalStreamer()
 #define LOG_ERROR(...)   ErsErrorStreamer()
 #define LOG_WARNING(...) ErsWarningStreamer()
-
-
-#define LOG_INFO(...)      TRACE_STREAMER(static_cast<int>(lvl_t::TLVL_INFO), \
-										  _tlog_ARG2(not_used, CHOOSE(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
-										  _tlog_ARG3(not_used, CHOOSE(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
-										  1, SL_FRC(static_cast<int>(lvl_t::TLVL_INFO)) )
-#define LOG_LOG(...)       TRACE_STREAMER(static_cast<int>(lvl_t::TLVL_LOG), \
+#if 0
+#	define LOG_LOG(...)  ErsLogStreamer()
+#	define LOG_INFO(...) ErsInfoStreamer()
+#else
+#	define LOG_LOG(...)  TRACE_STREAMER(static_cast<int>(lvl_t::TLVL_LOG), \
 										  _tlog_ARG2(not_used, CHOOSE(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
 										  _tlog_ARG3(not_used, CHOOSE(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
 										  1, SL_FRC(static_cast<int>(lvl_t::TLVL_LOG)) )
+#	define LOG_INFO(...) TRACE_STREAMER(static_cast<int>(lvl_t::TLVL_INFO), \
+										  _tlog_ARG2(not_used, CHOOSE(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
+										  _tlog_ARG3(not_used, CHOOSE(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
+										  1, SL_FRC(static_cast<int>(lvl_t::TLVL_INFO)) )
+#endif
 
 //  The following uses gnu extension of "##" connecting "," with empty __VA_ARGS__
 //  which eats "," when __VA_ARGS__ is empty.

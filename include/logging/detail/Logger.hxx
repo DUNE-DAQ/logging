@@ -151,6 +151,30 @@ namespace {  // unnamed namespace (i.e. static (for each compliation unit only))
 			return *this;
 		}
 	};  // class ErsWarningStreamer
+	class ErsInfoStreamer
+	{
+	public:
+		//ErsInfoStreamer( ers::LocalContext c ) : _ctx(c) {}
+		//ers::LocalContext _ctx;
+		inline ErsInfoStreamer &operator<<(const ers::Issue &r)
+		{
+			// would be nice of the "context" could be created from the streamer instance
+			ers::warning( r );
+			return *this;
+		}
+	};  // class ErsInfoStreamer
+	class ErsLogStreamer
+	{
+	public:
+		//ErsLogStreamer( ers::LocalContext c ) : _ctx(c) {}
+		//ers::LocalContext _ctx;
+		inline ErsLogStreamer &operator<<(const ers::Issue &r)
+		{
+			// would be nice of the "context" could be created from the streamer instance
+			ers::warning( r );
+			return *this;
+		}
+	};  // class ErsLogStreamer
 }  // namespace ""
 
 
