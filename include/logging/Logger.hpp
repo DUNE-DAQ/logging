@@ -105,9 +105,9 @@ public:
 #               pragma GCC system_header
 #       endif
 
-#define LOG_DEBUG(lvl,...) TRACE_STREAMER(static_cast<int>(lvl_t::lvl),	\
+#define LOG_DEBUG(lvl,...) TRACE_STREAMER(((static_cast<int>(lvl)<5)?5:static_cast<int>(lvl)), \
 										  tlog_ARG2(not_used, ##__VA_ARGS__,0,need_at_least_one), \
 										  tlog_ARG3(not_used, ##__VA_ARGS__,0,"",need_at_least_one), \
-										  1, SL_FRC(static_cast<int>(lvl_t::lvl)) )
+											  1, SL_FRC(((static_cast<int>(lvl)<5)?5:static_cast<int>(lvl))) )
 
 #endif // LOGGING_INCLUDE_LOGGING_LOGGER_HPP_

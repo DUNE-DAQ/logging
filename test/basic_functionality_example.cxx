@@ -52,7 +52,7 @@ void ex_thread( volatile const int *spinlock, int thread_idx )
 								// once all thread are created and given a
 								// chance to get here.
 	for (auto uu=0; uu<5; ++uu)
-		LOG_DEBUG(d08) << "tidx " << thread_idx << " fast "<<uu;
+		LOG_DEBUG(8) << "tidx " << thread_idx << " fast "<<uu;
 }
 
 
@@ -87,13 +87,13 @@ int main(int argc, char *argv[])
 	LOG_INFO("TEST1") << ers::Message(ERS_HERE,"a specific TraceStreamer method with ers::Message isn't defined.");
 	LOG_LOG("TEST1")  << appframework::CommandNotRegistered2(ERS_HERE,"MyCommand");
 
-	LOG_DEBUG(d00) << "hello - debug level 0 mapped to 5";
-	LOG_DEBUG(d05) << "hello - debug level 5";
-	LOG_DEBUG(d06) << "hello - debug level 6";
-	LOG_DEBUG(d07) << ers::CantOpenFile2(ERS_HERE,"My_d07_FileName");
+	LOG_DEBUG(lvl_t::d00) << "hello - debug level 0 mapped to 5";
+	LOG_DEBUG(lvl_t::d05) << "hello - debug level 5";
+	LOG_DEBUG(lvl_t::d06) << "hello - debug level 6";
+	LOG_DEBUG(7) << ers::CantOpenFile2(ERS_HERE,"My_d07_FileName");
 
-	LOG_DEBUG(d08,"TEST2") << "testing name argument";
-	LOG_DEBUG(d63) << "debug lvl 63";
+	LOG_DEBUG(lvl_t::d08,"TEST2") << "testing name argument";
+	LOG_DEBUG(lvl_t::d63) << "debug lvl 63";
 
 	std::cout << "\ntshow follows:\n\n";
 	system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %e %l %R %m\" trace_cntl show | trace_delta -ct 1 -d 1" );
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 		threads[uu].join();
 
 	std::cout << "\ntshow follows:\n\n";
-	system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %e %l %R %m\" trace_cntl show -c 25 | trace_delta -ct 1 -d 1" );
+	system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %e %L %R %m\" trace_cntl show -c 25 | trace_delta -ct 1 -d 1" );
 
 	return (0);
 }   // main
