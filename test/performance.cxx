@@ -10,6 +10,6 @@
 
 int main(/*int	argc, char	*argv[]*/)
 {
-	LOG_DEBUG(d00) << "hello";
+	LOG_DEBUG(lvl_t::d00) << "hello";
 	return (0);
 }   // main
