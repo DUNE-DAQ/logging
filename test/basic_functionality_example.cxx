@@ -19,14 +19,14 @@
 #include <logging/Logger.hpp>
 #include <ers/Issue.h>
 
-/** \def ers::File This is the base class for all file related issues.
+/** \def ers::File2 This is the base class for all file related issues.
 */
 ERS_DECLARE_ISSUE(ers,		// namespace
 					  File2,		// issue class name
 					  ERS_EMPTY, // no message
 					  ((const char *)file_name ) // single attribute
                       )
-/** \def ers::CantOpenFile This issue is reported when a certain file can
+/** \def ers::CantOpenFile2 This issue is reported when a certain file can
 * not be opened by any reason.
 */
 ERS_DECLARE_ISSUE_BASE(ers,	// namespace
@@ -67,8 +67,13 @@ int main(int argc, char *argv[])
 	TRACE_CNTL("reset");
 
 	Logger().setup(arguments);
-	LOG_INFO() << "The Logger has just been setup and this is am Info log message (LOG_INFO).";
-	LOG_INFO() << ers::Message(ERS_HERE,"A LOG_INFO using ers::Message - The Logger has just been setup.");
+	LOG_INFO()  << ers::Message(ERS_HERE,"A LOG_INFO()   using ers::Message - The Logger has just been setup.");
+	LOG_LOG()   << ers::Message(ERS_HERE,"A LOG_LOG()    using ers::Message - The Logger has just been setup.");
+	LOG_DEBUG(6)<< ers::Message(ERS_HERE,"A LOG_DEBUG(6) using ers::Message - The Logger has just been setup. ERS bug - 1st DEBUG is always DEBUG_0");
+	LOG_DEBUG(6)<< ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_DEBUG_6");
+	LOG_LOG()   << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_LOG");
+	LOG_INFO()  << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_INFO");
+	LOG_INFO() << "The Logger has just been setup and this is an Info log message (LOG_INFO).";
 
 	//----------------------------------------
 

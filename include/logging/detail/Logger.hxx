@@ -54,7 +54,13 @@ static void verstrace_user(struct timeval *, int TID, uint8_t lvl, const char* i
 			outp = msg;
 	}
 	// LocalContext args: 1-"package_name" 2-"file" 3-"line" 4-"pretty_function" 5-"include_stack"
-	ers::LocalContext lc( traceNamLvls_p[TID].name, file, line, function, DEBUG_FORCED );
+	ers::LocalContext lc(
+# if TRACE_REVNUM >= 1322
+						 reinterpret_cast<char*>(idx2namLvlsPtr(TID)+1),
+# else
+						 traceNamLvls_p[TID].name,
+# endif
+						 file, line, function, DEBUG_FORCED );
 	//std::ostringstream ers_report_impl_out_buffer;
 	//ers_report_impl_out_buffer << outp;
 	switch (static_cast<lvl_t>(lvl))
@@ -100,21 +106,68 @@ static void erstrace_user(struct timeval *tvp, int TID, uint8_t lvl, const char*
 
 
 
-// The following allow an ers::Issue to be streamed into LOG_DEBUG(N)
+// The following allow an ers::Issue to be streamed into LOG_INFO(), LOG_LOG(), LOG_DEBUG(N)
 inline TraceStreamer& operator<<(TraceStreamer& x, const ers::Issue &r)
 {
-	//assert(x.lvl_ == TLVL_WARING)
+    if (x.do_m) {
+		x.line_ = r.context().line_number();
+		x.msg_append(r.message().c_str());
+	}
+	switch(static_cast<lvl_t>(x.lvl_)){
+	case lvl_t::TLVL_INFO: ers::info(  r ); break;
+	case lvl_t::TLVL_LOG:  ers::log(   r ); break;
+	default:               ers::debug( r, x.lvl_ ); break;
+	}
+	x.do_s = 0;
+	return x;
+}
+inline TraceStreamer& operator<<(TraceStreamer& x, const ers::Message &r)
+{
 	if (x.do_m) {
 		x.line_ = r.context().line_number();
 		x.msg_append(r.message().c_str());
 	}
-	if (static_cast<lvl_t>(x.lvl_) == lvl_t::TLVL_WARNING)
-		ers::warning( r );
-	else
-		ers::info( r );
+	switch(static_cast<lvl_t>(x.lvl_)){
+	case lvl_t::TLVL_INFO: ers::info(  r ); break;
+	case lvl_t::TLVL_LOG:  ers::log(   r ); break;
+	default:
+		ers::debug( r, x.lvl_ );
+		break;
+	}
 	x.do_s = 0;
 	return x;
 }
+
+// Ref. ers/internal/IssueDeclarationMacro.h
+# undef  ERS_DECLARE_ISSUE_BASE
+# define ERS_DECLARE_ISSUE_BASE(           namespace_name, class_name, base_class_name, message_, base_attributes, attributes ) \
+        __ERS_DECLARE_ISSUE_BASE__(        namespace_name, class_name, base_class_name, message_, base_attributes, attributes )\
+        __ERS_DEFINE_ISSUE_BASE__( inline, namespace_name, class_name, base_class_name, message_, base_attributes, attributes ) \
+                static inline TraceStreamer& operator<<(TraceStreamer& x, const namespace_name::class_name &r) \
+                {if (x.do_m)   { x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );} \
+                 switch(static_cast<lvl_t>(x.lvl_)){                                                    \
+                 case lvl_t::TLVL_INFO: ers::info(  r );         break;        \
+                 case lvl_t::TLVL_LOG:  ers::log(   r );         break;        \
+                 default:               ers::debug( r, x.lvl_ ); break; \
+                 }                                                                                                                              \
+				 x.do_s = 0; \
+                 return x; \
+                }
+
+# undef  ERS_DECLARE_ISSUE
+# define ERS_DECLARE_ISSUE(                namespace_name, class_name,                       message_,            attributes ) \
+        __ERS_DECLARE_ISSUE_BASE__(        namespace_name, class_name, ers::Issue, ERS_EMPTY message_, ERS_EMPTY, attributes ) \
+        __ERS_DEFINE_ISSUE_BASE__( inline, namespace_name, class_name, ers::Issue, ERS_EMPTY message_, ERS_EMPTY, attributes ) \
+                static inline TraceStreamer& operator<<(TraceStreamer& x, const namespace_name::class_name &r) \
+                {if (x.do_m)   { x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );} \
+                 switch(static_cast<lvl_t>(x.lvl_)){                                                    \
+                 case lvl_t::TLVL_INFO: ers::info(  r );         break;        \
+                 case lvl_t::TLVL_LOG:  ers::log(   r );         break;        \
+                 default:               ers::debug( r, x.lvl_ ); break; \
+                 }                                                                                                                              \
+				 x.do_s = 0; \
+                 return x; \
+                }
 
 
 namespace {  // unnamed namespace (i.e. static (for each compliation unit only))
