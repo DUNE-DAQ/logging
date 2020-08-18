@@ -45,6 +45,11 @@ ERS_DECLARE_ISSUE(appframework, // namespace
                       ((const char *)command_name ) // single attribute
                       )
 
+ERS_DECLARE_ISSUE(appframework, // namespace
+                      MyExit, // issue class name
+                  "exiting",
+                  ERS_EMPTY				   // no attributes in this class
+                           )
 
 void ex_thread( volatile const int *spinlock, int thread_idx )
 {
@@ -121,5 +126,6 @@ int main(int argc, char *argv[])
 	std::cout << "\ntshow follows:\n\n";
 	system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %e %L %R %m\" trace_cntl show -c 25 | trace_delta -ct 1 -d 1" );
 
+	throw( appframework::MyExit(ERS_HERE) );
 	return (0);
 }   // main
