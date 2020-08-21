@@ -57,7 +57,7 @@ void ex_thread( volatile const int *spinlock, int thread_idx )
 								// once all thread are created and given a
 								// chance to get here.
 	for (auto uu=0; uu<5; ++uu)
-		LOG_DEBUG(8) << "tidx " << thread_idx << " fast "<<uu;
+		LOG_DEBUG(8) << "tidx " << thread_idx << " fast LOG_DEBUG(8) #" <<uu;
 }
 
 
@@ -74,15 +74,13 @@ int main(int argc, char *argv[])
 	Logger().setup(arguments);
 	LOG_INFO()  << ers::Message(ERS_HERE,"A LOG_INFO()   using ers::Message - The Logger has just been setup.");
 	LOG_LOG()   << ers::Message(ERS_HERE,"A LOG_LOG()    using ers::Message - The Logger has just been setup.");
-	LOG_DEBUG(6)<< ers::Message(ERS_HERE,"A LOG_DEBUG(6) using ers::Message - The Logger has just been setup. ERS bug - 1st DEBUG is always DEBUG_0");
-	LOG_DEBUG(6)<< ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_DEBUG_6");
 	LOG_LOG()   << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_LOG");
 	LOG_INFO()  << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_INFO");
 	LOG_INFO() << "The Logger has just been setup and this is an Info log message (LOG_INFO).";
 
 	//----------------------------------------
 
-	LOG_FATAL() << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName - usually assiated with throw or exit");
+	LOG_FATAL() << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName - usually associated with throw or exit");
 	//ers::error( ers::Message( ERS_HERE, "this is ers::error( ers::Message( ERS_HERE, \"this is ...\" ) )" ) );
 	LOG_ERROR() << ers::CantOpenFile2(ERS_HERE,"My_Error_FileName");
 #   if TRY_COMPILE & 0x1
@@ -96,17 +94,23 @@ int main(int argc, char *argv[])
 
 	LOG_INFO("TEST1") << ers::Message(ERS_HERE,"a specific TraceStreamer method with ers::Message isn't defined.");
 	LOG_LOG("TEST1")  << appframework::CommandNotRegistered2(ERS_HERE,"MyCommand");
+	LOG_LOG() << "LOG_LOG() stating LOG_DEBUG(n)'s follow -- they must be enabled via trace_cntl or TDAQ_ERS_DEBUG_LEVEL";
 
-	LOG_DEBUG(lvl_t::d00) << "hello - debug level 0 mapped to 5";
-	LOG_DEBUG(lvl_t::d05) << "hello - debug level 5";
-	LOG_DEBUG(lvl_t::d06) << "hello - debug level 6";
+	LOG_DEBUG(6)<< ers::Message(ERS_HERE,"A LOG_DEBUG(6) using ers::Message - The Logger has just been setup. ERS bug - 1st DEBUG is always DEBUG_0");
+	LOG_DEBUG(6)<< ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_DEBUG_6");
+	LOG_DEBUG(0) << "hello - debug level 0";
+	LOG_DEBUG(5) << "hello - debug level 5";
+	LOG_DEBUG(6) << "hello - debug level 6";
 	LOG_DEBUG(7) << ers::CantOpenFile2(ERS_HERE,"My_d07_FileName");
 
-	LOG_DEBUG(lvl_t::d08,"TEST2") << "testing name argument";
-	LOG_DEBUG(lvl_t::d63) << "debug lvl 63";
+	LOG_DEBUG(8,"TEST2") << "testing name argument";
+	LOG_DEBUG(55) << "debug lvl 55";
+	LOG_DEBUG(56) << "debug lvl 56";
+	LOG_DEBUG(63) << "debug lvl 63";
+	LOG_DEBUG(64) << "debug lvl 64";
 
 	std::cout << "\ntshow follows:\n\n";
-	system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %e %l %R %m\" trace_cntl show | trace_delta -ct 1 -d 1" );
+	system( "TRACE_TIME_FMT=\"%Y-%b-%d %H:%M:%S,%%03d\" TRACE_SHOW=\"%H%x%N %T %e %l %L %m\" trace_cntl show | trace_delta -ct 1 -d 1" );
 
 	std::cout << "\nOne could try the same with TDAQ_ERS_VERBOSITY_LEVEL=2 or 3\n";
 

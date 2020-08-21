@@ -21,25 +21,16 @@
   static void erstrace_user(struct timeval *, int, uint8_t, const char*, const char*, int, const char*, uint16_t nargs, const std::string& msg, ...)
 #undef TRACE_LOG_FUNCTION
 #define TRACE_LOG_FUNCTION erstrace_user
-#define TRACE_4_LVLSTRS "fatal","error","warning","info"
-#define TRACE_60_LVLSTRS  "log","debug","dbg06","dbg07","dbg08","dbg09","dbg10","dbg11","dbg12","dbg13","dbg14","dbg15",\
-		"dbg16","dbg17","dbg18","dbg19","dbg20","dbg21","dbg22","dbg23","dbg24","dbg25","dbg26","dbg27","dbg28","dbg29","dbg30","dbg31",\
-		"dbg32","dbg33","dbg34","dbg35","dbg36","dbg37","dbg38","dbg39","dbg40","dbg41","dbg42","dbg43","dbg44","dbg45","dbg46","dbg47",\
-		"dbg48","dbg49","dbg50","dbg51","dbg52","dbg53","dbg54","dbg55","dbg56","dbg57","dbg58","dbg59","dbg60","dbg61","dbg62","dbg63"
+// NOTE: TRACE_*_LVLSTRS would only affect the application slow path, which
+// in this case, is not applicable. Memory buffer formatted output (via
+// trace_cntl) would use TRACE_*_LVLSTRS but is not being built.
 #include "TRACE/trace.h"
 
-
-// The following from TRACE will become enum
-#undef TLVL_ERROR
-#undef TLVL_WARNING
-#undef TLVL_INFO
-#undef TLVL_DEBUG
-
-enum class lvl_t { TLVL_FATAL,TLVL_ERROR,TLVL_WARNING,TLVL_INFO,TLVL_LOG,TLVL_DEBUG,
-		d00=5,d01=5,d02=5,d03=5,d04=5,d05=5,d06,d07,d08,d09,d10,d11,d12,d13,d14,d15,
-		d16,d17,d18,d19,d20,d21,d22,d23,d24,d25,d26,d27,d28,d29,d30,d31,
-		d32,d33,d34,d35,d36,d37,d38,d39,d40,d41,d42,d43,d44,d45,d46,d47,
-		d48,d49,d50,d51,d52,d53,d54,d55,d56,d57,d58,d59,d60,d61,d62,d63};
+#if TRACE_REVNUM < 1322
+// Older TRACE does not have FATAL and LOG, map those to ERROR and INFO
+#  define TLVL_FATAL TLVL_ERROR
+#  define TLVL_LOG   TLVL_INFO
+#endif
 
 #include <logging/detail/Logger.hxx> // needs TLVL_* definitions
 
@@ -74,26 +65,36 @@ public:
 		int lvl=1;
 		ers::debug(ers::Message(lc,"hello") BOOST_PP_COMMA_IF( BOOST_PP_NOT( ERS_IS_EMPTY(ERS_EMPTY lvl) ) ) lvl);
 		ers::Configuration::instance().debug_level(63);
+		char *cp;
+		if ((cp=getenv("TDAQ_ERS_DEBUG_LEVEL"))) {
+			int lvl;
+			if (*cp)
+				lvl=strtoul(cp,NULL,0)+TLVL_DEBUG+1;
+			else
+				lvl=TLVL_DEBUG;
+			TRACE_CNTL("lvlmskSg",(1ULL<<lvl)-1);
+		}
 	}
 };
 
 
 
-// The following Streamer macros a) only accept Issue objects, and b) ignore and params
+// The following Streamer macros a) only accept Issue objects, and b) ignore any params
 #define LOG_FATAL(...)   ErsFatalStreamer()
 #define LOG_ERROR(...)   ErsErrorStreamer()
 #define LOG_WARNING(...) ErsWarningStreamer()
 
-// The following Stream macros a) accept strings or Issue objects, and b) ignore and accept optional
-// arguments
-#define LOG_LOG(...)  TRACE_STREAMER(static_cast<int>(lvl_t::TLVL_LOG), \
+// The following Stream macros a) accept strings or Issue objects, and b)
+// accept optional arguments - NAME and/or "noDelayedFmt"
+// The TRACE_STREAMER args are: 1-lvl, 2,3-nam_or_fmt, 4-slow_enabled, 5-slow_force
+#define LOG_LOG(...)  TRACE_STREAMER(TLVL_LOG, \
 										  _tlog_ARG2(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
 										  _tlog_ARG3(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
-										  1, SL_FRC(static_cast<int>(lvl_t::TLVL_LOG)) )
-#define LOG_INFO(...) TRACE_STREAMER(static_cast<int>(lvl_t::TLVL_INFO), \
+										  1, SL_FRC(TLVL_LOG) )
+#define LOG_INFO(...) TRACE_STREAMER(TLVL_INFO, \
 										  _tlog_ARG2(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
 										  _tlog_ARG3(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
-										  1, SL_FRC(static_cast<int>(lvl_t::TLVL_INFO)) )
+										  1, SL_FRC(TLVL_INFO) )
 
 //  The following uses gnu extension of "##" connecting "," with empty __VA_ARGS__
 //  which eats "," when __VA_ARGS__ is empty.
@@ -105,9 +106,9 @@ public:
 #               pragma GCC system_header
 #       endif
 
-#define LOG_DEBUG(lvl,...) TRACE_STREAMER(((static_cast<int>(lvl)<5)?5:static_cast<int>(lvl)), \
+#define LOG_DEBUG(lvl,...) TRACE_STREAMER(((TLVL_DEBUG+lvl)<64)?TLVL_DEBUG+lvl:63, \
 										  tlog_ARG2(not_used, ##__VA_ARGS__,0,need_at_least_one), \
 										  tlog_ARG3(not_used, ##__VA_ARGS__,0,"",need_at_least_one), \
-											  1, SL_FRC(((static_cast<int>(lvl)<5)?5:static_cast<int>(lvl))) )
+										  1, 0 )
 
 #endif // LOGGING_INCLUDE_LOGGING_LOGGER_HPP_

@@ -63,23 +63,9 @@ static void verstrace_user(struct timeval *, int TID, uint8_t lvl, const char* i
 						 file, line, function, DEBUG_FORCED );
 	//std::ostringstream ers_report_impl_out_buffer;
 	//ers_report_impl_out_buffer << outp;
-	switch (static_cast<lvl_t>(lvl))
-	{
-	case lvl_t::TLVL_INFO:
-		ers::info( ers::Message( lc, outp )	\
-		         BOOST_PP_COMMA_IF( BOOST_PP_NOT( ERS_IS_EMPTY( ERS_EMPTY ERS_EMPTY ) ) ) ERS_EMPTY ); \
-		break;
- 	case lvl_t::TLVL_LOG:
-		ers::log( ers::Message( lc, outp )	\
-		         BOOST_PP_COMMA_IF( BOOST_PP_NOT( ERS_IS_EMPTY( ERS_EMPTY ERS_EMPTY ) ) ) ERS_EMPTY ); \
-		break;
-	default:
-		//lvl -=2 ;
-		if ( ers::debug_level() >= lvl )
-			ers::debug( ers::Message( lc, outp ) \
-			           BOOST_PP_COMMA_IF( BOOST_PP_NOT( ERS_IS_EMPTY( ERS_EMPTY lvl ) ) ) lvl ); \
-		break;
-	}
+	if      (lvl==TLVL_INFO) ers::info(  ers::Message(lc,outp) );						\
+	else if (lvl==TLVL_LOG)  ers::log(   ers::Message(lc,outp) );						\
+	else                     ers::debug( ers::Message(lc,outp),lvl-TLVL_DEBUG );		\
 }
 
 // NOTE: lvl translation occurs
@@ -113,12 +99,12 @@ inline TraceStreamer& operator<<(TraceStreamer& x, const ers::Issue &r)
 		x.line_ = r.context().line_number();
 		x.msg_append(r.message().c_str());
 	}
-	switch(static_cast<lvl_t>(x.lvl_)){
-	case lvl_t::TLVL_INFO: ers::info(  r ); break;
-	case lvl_t::TLVL_LOG:  ers::log(   r ); break;
-	default:               ers::debug( r, x.lvl_ ); break;
+	if (x.do_s) {
+		if      (x.lvl_==TLVL_INFO) ers::info(  r );					\
+		else if (x.lvl_==TLVL_LOG)  ers::log(   r );					\
+		else                        ers::debug( r, x.lvl_-TLVL_DEBUG );	\
+		x.do_s = 0;
 	}
-	x.do_s = 0;
 	return x;
 }
 inline TraceStreamer& operator<<(TraceStreamer& x, const ers::Message &r)
@@ -127,31 +113,29 @@ inline TraceStreamer& operator<<(TraceStreamer& x, const ers::Message &r)
 		x.line_ = r.context().line_number();
 		x.msg_append(r.message().c_str());
 	}
-	switch(static_cast<lvl_t>(x.lvl_)){
-	case lvl_t::TLVL_INFO: ers::info(  r ); break;
-	case lvl_t::TLVL_LOG:  ers::log(   r ); break;
-	default:
-		ers::debug( r, x.lvl_ );
-		break;
+	if (x.do_s) {
+		if      (x.lvl_==TLVL_INFO) ers::info(  r );					\
+		else if (x.lvl_==TLVL_LOG)  ers::log(   r );					\
+		else                        ers::debug( r, x.lvl_-TLVL_DEBUG );	\
+		x.do_s = 0;
 	}
-	x.do_s = 0;
 	return x;
 }
 
 // Ref. ers/internal/IssueDeclarationMacro.h
 # undef  ERS_DECLARE_ISSUE_BASE
 # define ERS_DECLARE_ISSUE_BASE(           namespace_name, class_name, base_class_name, message_, base_attributes, attributes ) \
-        __ERS_DECLARE_ISSUE_BASE__(        namespace_name, class_name, base_class_name, message_, base_attributes, attributes )\
+        __ERS_DECLARE_ISSUE_BASE__(        namespace_name, class_name, base_class_name, message_, base_attributes, attributes )	\
         __ERS_DEFINE_ISSUE_BASE__( inline, namespace_name, class_name, base_class_name, message_, base_attributes, attributes ) \
                 static inline TraceStreamer& operator<<(TraceStreamer& x, const namespace_name::class_name &r) \
                 {if (x.do_m)   { x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );} \
-                 switch(static_cast<lvl_t>(x.lvl_)){                                                    \
-                 case lvl_t::TLVL_INFO: ers::info(  r );         break;        \
-                 case lvl_t::TLVL_LOG:  ers::log(   r );         break;        \
-                 default:               ers::debug( r, x.lvl_ ); break; \
-                 }                                                                                                                              \
-				 x.do_s = 0; \
-                 return x; \
+				 if (x.do_s) { \
+					 if      (x.lvl_==TLVL_INFO) ers::info(  r );		\
+					 else if (x.lvl_==TLVL_LOG)  ers::log(   r );		\
+					 else                        ers::debug( r, x.lvl_-TLVL_DEBUG ); \
+					 x.do_s = 0;										\
+				 }														\
+                 return x;												\
                 }
 
 # undef  ERS_DECLARE_ISSUE
@@ -160,12 +144,12 @@ inline TraceStreamer& operator<<(TraceStreamer& x, const ers::Message &r)
         __ERS_DEFINE_ISSUE_BASE__( inline, namespace_name, class_name, ers::Issue, ERS_EMPTY message_, ERS_EMPTY, attributes ) \
                 static inline TraceStreamer& operator<<(TraceStreamer& x, const namespace_name::class_name &r) \
                 {if (x.do_m)   { x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );} \
-                 switch(static_cast<lvl_t>(x.lvl_)){                                                    \
-                 case lvl_t::TLVL_INFO: ers::info(  r );         break;        \
-                 case lvl_t::TLVL_LOG:  ers::log(   r );         break;        \
-                 default:               ers::debug( r, x.lvl_ ); break; \
-                 }                                                                                                                              \
-				 x.do_s = 0; \
+				 if (x.do_s) {											\
+					 if      (x.lvl_==TLVL_INFO) ers::info(  r );		\
+					 else if (x.lvl_==TLVL_LOG)  ers::log(   r );		\
+					 else                        ers::debug( r, x.lvl_ ); \
+					 x.do_s = 0;										\
+				 }														\
                  return x; \
                 }
 
@@ -240,34 +224,40 @@ namespace ers
 struct erstraceStream : public OutputStream {
         void write( const ers::Issue & issue )
         {
-                // can't get "severity" that the stream is associated with.
-                // what about the time??
-                if TRACE_INIT_CHECK(TRACE_NAME)
-                {
-                        struct timeval lclTime;
-						ers::Severity sev = issue.severity();
-                        uint8_t lvl_;
-						switch (sev.type) {
-						case ers::Debug:       lvl_=5+sev.rank; break;
-						case ers::Log:         lvl_=4;          break;
-						case ers::Information: lvl_=3;          break;
-						case ers::Warning:     lvl_=2;          break;
-						case ers::Error:       lvl_=1;          break;
-						case ers::Fatal:       lvl_=0;          break;
-						}
-                        std::chrono::system_clock::time_point tp{issue.ptime()};
-                        //auto micros = std::chrono::duration_cast<std::chrono::microseconds>(tp.time_since_epoch());
-                        std::chrono::microseconds micros = std::chrono::duration_cast<std::chrono::microseconds>(tp.time_since_epoch());
-                        lclTime.tv_sec  = micros.count() / 1000000;
-                        lclTime.tv_usec = micros.count() % 1000000;
-						int traceID = name2TID(trace_path_components(issue.context().file_name(),1));
-                        trace(&lclTime, traceID, lvl_, issue.context().line_number(),
+			ers::Severity sev = issue.severity();
+			uint8_t lvl_;
+			switch (sev.type) {
+			case ers::Debug:       lvl_=TLVL_DEBUG+sev.rank;break;
+			case ers::Log:         lvl_=TLVL_LOG;           break;
+			case ers::Information: lvl_=TLVL_INFO;          break;
+			case ers::Warning:     lvl_=TLVL_WARNING;       break;
+			case ers::Error:       lvl_=TLVL_ERROR;         break;
+			case ers::Fatal:       lvl_=TLVL_FATAL;         break;
+			}
 # if TRACE_REVNUM >= 1322
-                              issue.context().function_name(),
+			struct { char tn[TRACE_TN_BUFSZ]; } _trc_;
+			if (TRACE_INIT_CHECK(trace_name(TRACE_NAME,issue.context().file_name(),_trc_.tn,sizeof(_trc_.tn)))) {
+				struct traceNamLvls_s *lvlsp=idx2namLvlsPtr(traceTID);
+				if (traceControl_rwp->mode.bits.M && (lvlsp->M & TLVLMSK(lvl_))) {
+# else
+			if (TRACE_INIT_CHECK(TRACE_NAME)) {
+				if (traceControl_rwp->mode.bits.M && (traceNamLvls_p[traceTID].M & TLVLMSK(lvl_))) {
 # endif
-                              0 TRACE_XTRA_PASSED, issue.message().c_str());
-                }
-                chained().write( issue );
+					struct timeval lclTime;
+					std::chrono::system_clock::time_point tp{issue.ptime()};
+					//auto micros = std::chrono::duration_cast<std::chrono::microseconds>(tp.time_since_epoch());
+					std::chrono::microseconds micros = std::chrono::duration_cast<std::chrono::microseconds>(tp.time_since_epoch());
+					lclTime.tv_sec  = micros.count() / 1000000;
+					lclTime.tv_usec = micros.count() % 1000000;
+					int traceID = name2TID(trace_path_components(issue.context().file_name(),1));
+					trace(&lclTime, traceID, lvl_, issue.context().line_number(),
+# if TRACE_REVNUM >= 1322
+					      issue.context().function_name(),
+# endif
+					      0 TRACE_XTRA_PASSED, issue.message().c_str());
+				}
+            }
+			chained().write( issue );
         }
 };
 }
@@ -275,7 +265,7 @@ ERS_REGISTER_OUTPUT_STREAM( ers::erstraceStream, "erstrace", ERS_EMPTY )    // l
 
 
 // Support macros
-#define SL_FRC(lvl) ((lvl)==0 || (lvl)==1)
+#define SL_FRC(lvl) ((lvl)>=0 && (lvl)<TLVL_DEBUG)
 
 #define LOG0_()              
 #define LOG1_(value)            value,
