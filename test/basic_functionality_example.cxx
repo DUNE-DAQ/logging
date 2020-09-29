@@ -67,13 +67,15 @@ int main(int argc, char *argv[])
 	std::vector<std::string> arguments(argv + 1, argv + argc);
 
 	// activate TRACE memory buffer for debugging
-	setenv("TRACE_MSGMAX","0",0);
+	std::string tfile="/tmp/trace_buffer_"+std::string(getenv("USER"))+"_basic";
+	system( ("rm -f "+tfile).c_str() );
+	setenv("TRACE_FILE",tfile.c_str(),0);
 	setenv("TRACE_LVLM","-1",0);
 	setenv("TRACE_LVLS","0xff",0);
 	TRACE_CNTL("reset");
 
 	Logger().setup(arguments);
-	LOG_INFO()  << ers::Message(ERS_HERE,"A LOG_INFO()   using ers::Message - The Logger has just been setup.");
+	LOG_INFO()  << ers::Message(ERS_HERE,"Using TRACE_FILE="+tfile);
 	LOG_LOG()   << ers::Message(ERS_HERE,"A LOG_LOG()    using ers::Message - The Logger has just been setup.");
 	LOG_LOG()   << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_LOG");
 	LOG_INFO()  << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_INFO");

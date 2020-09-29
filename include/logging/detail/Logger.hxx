@@ -254,7 +254,7 @@ struct erstraceStream : public OutputStream {
 					std::chrono::microseconds micros = std::chrono::duration_cast<std::chrono::microseconds>(tp.time_since_epoch());
 					lclTime.tv_sec  = micros.count() / 1000000;
 					lclTime.tv_usec = micros.count() % 1000000;
-					int traceID = trace_name2TID(trace_path_components(issue.context().file_name(),1));
+					int traceID = trace_name2TID( trace_name(TRACE_NAME,issue.context().file_name(),_trc_.tn,sizeof(_trc_.tn)) );
 					trace(&lclTime, traceID, lvl_, issue.context().line_number(),
 # if TRACE_REVNUM >= 1322
 					      issue.context().function_name(),
