@@ -14,6 +14,8 @@
 #	define TRACE_NAME TDAQ_PACKAGE_NAME
 #endif
 
+#include <string>
+#include <vector>
 #include "ers/ers.h"
 #include <ers/OutputStream.h>
 #define TRACE_LOG_FUN_PROTO \
@@ -69,7 +71,7 @@ public:
 		if ((cp=getenv("TDAQ_ERS_DEBUG_LEVEL"))) {
 			int lvl;
 			if (*cp)
-				lvl=strtoul(cp,NULL,0)+TLVL_DEBUG+1;
+				lvl=strtoul(cp,nullptr,0)+TLVL_DEBUG+1;
 			else
 				lvl=TLVL_DEBUG;
 			TRACE_CNTL("lvlmskSg",(1ULL<<lvl)-1);

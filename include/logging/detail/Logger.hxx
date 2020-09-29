@@ -10,6 +10,13 @@
 
 #include <stdlib.h>				// setenv
 
+#if TRACE_REVNUM < 1394
+#	define TRACE_SNPRINTED  SNPRINTED
+#	define traceLvls_s      traceNamLvls_s
+#	define traceLvls_p      traceNamLvls_p
+#	define trace_name2TID	name2TID
+#endif
+
 #if defined(__has_feature)
 #  if __has_feature(thread_sanitizer)
 __attribute__((no_sanitize("thread")))
@@ -29,16 +36,16 @@ static void verstrace_user(struct timeval *, int TID, uint8_t lvl, const char* i
 		// assume insert is smaller than obuf
 		if (printed) {
 			retval = snprintf(obuf,sizeof(obuf),"%s ",insert );
-			printed = SNPRINTED(retval,sizeof(obuf));
+			printed = TRACE_SNPRINTED(retval,sizeof(obuf));
 		}
 		if (nargs) {
 			retval = vsnprintf(&(obuf[printed]), sizeof(obuf) - printed, msg, ap); // man page say obuf will always be terminated
-			printed += SNPRINTED(retval,sizeof(obuf)-printed);
+			printed += TRACE_SNPRINTED(retval,sizeof(obuf)-printed);
 		} else {
 			/* don't do any parsing for format specifiers in the msg -- tshow will
 			   also know to do this on the memory side of things */
 			retval = snprintf( &(obuf[printed]), sizeof(obuf)-printed, "%s", msg );
-			printed += SNPRINTED(retval,sizeof(obuf)-printed);
+			printed += TRACE_SNPRINTED(retval,sizeof(obuf)-printed);
 		}
 		if (obuf[printed-1] == '\n')
 			obuf[printed-1] = '\0';  // DONE w/ printed (don't need to decrement
@@ -46,7 +53,7 @@ static void verstrace_user(struct timeval *, int TID, uint8_t lvl, const char* i
 	} else {
 		if (msg[strlen(msg)-1] == '\n') { // need to copy to remove the trailing nl
 			retval = snprintf( obuf, sizeof(obuf), "%s", msg );
-			printed = SNPRINTED(retval,sizeof(obuf));
+			printed = TRACE_SNPRINTED(retval,sizeof(obuf));
 			if (obuf[printed-1] == '\n')
 				obuf[printed-1] = '\0';  // DONE w/ printed (don't need to decrement
 			outp = obuf;
@@ -56,7 +63,7 @@ static void verstrace_user(struct timeval *, int TID, uint8_t lvl, const char* i
 	// LocalContext args: 1-"package_name" 2-"file" 3-"line" 4-"pretty_function" 5-"include_stack"
 	ers::LocalContext lc(
 # if TRACE_REVNUM >= 1322
-						 reinterpret_cast<char*>(idx2namLvlsPtr(TID)+1),
+						 reinterpret_cast<char*>(idx2namsPtr(TID)+1),
 # else
 						 traceNamLvls_p[TID].name,
 # endif
@@ -234,22 +241,20 @@ struct erstraceStream : public OutputStream {
 			case ers::Error:       lvl_=TLVL_ERROR;         break;
 			case ers::Fatal:       lvl_=TLVL_FATAL;         break;
 			}
-# if TRACE_REVNUM >= 1322
+# if TRACE_REVNUM >= 1394
 			struct { char tn[TRACE_TN_BUFSZ]; } _trc_;
 			if (TRACE_INIT_CHECK(trace_name(TRACE_NAME,issue.context().file_name(),_trc_.tn,sizeof(_trc_.tn)))) {
-				struct traceNamLvls_s *lvlsp=idx2namLvlsPtr(traceTID);
-				if (traceControl_rwp->mode.bits.M && (lvlsp->M & TLVLMSK(lvl_))) {
 # else
 			if (TRACE_INIT_CHECK(TRACE_NAME)) {
-				if (traceControl_rwp->mode.bits.M && (traceNamLvls_p[traceTID].M & TLVLMSK(lvl_))) {
 # endif
+				if (traceControl_rwp->mode.bits.M && (traceLvls_p[traceTID].M & TLVLMSK(lvl_))) {
 					struct timeval lclTime;
 					std::chrono::system_clock::time_point tp{issue.ptime()};
 					//auto micros = std::chrono::duration_cast<std::chrono::microseconds>(tp.time_since_epoch());
 					std::chrono::microseconds micros = std::chrono::duration_cast<std::chrono::microseconds>(tp.time_since_epoch());
 					lclTime.tv_sec  = micros.count() / 1000000;
 					lclTime.tv_usec = micros.count() % 1000000;
-					int traceID = name2TID(trace_path_components(issue.context().file_name(),1));
+					int traceID = trace_name2TID(trace_path_components(issue.context().file_name(),1));
 					trace(&lclTime, traceID, lvl_, issue.context().line_number(),
 # if TRACE_REVNUM >= 1322
 					      issue.context().function_name(),

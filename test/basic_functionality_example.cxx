@@ -4,8 +4,7 @@
  * This is part of the DUNE DAQ Application Framework, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have
  * received with this code.
- */
-/*
+ *
   cd build/logging
   make clean basic_functionality_example CXX_DEFINES=-DTRY_COMPILE=0
   test/basic_functionality_example
@@ -15,7 +14,9 @@
   TRACE_LVLS=-1 test/basic_functionality_example
  */
 
-#define TRACE_NAME "basic_functionality_example" // next version (after v3_15_09) will do this automatically
+#include <string>
+#include <vector>
+#define TRACE_NAME "basic_functionality_example" // NOLINT next version (after v3_15_09) will do this automatically
 #include <logging/Logger.hpp>
 #include <ers/Issue.h>
 
@@ -109,25 +110,25 @@ int main(int argc, char *argv[])
 	LOG_DEBUG(63) << "debug lvl 63";
 	LOG_DEBUG(64) << "debug lvl 64";
 
-	std::cout << "\ntshow follows:\n\n";
+	LOG_INFO() << "\ntshow follows:\n\n";
 	system( "TRACE_TIME_FMT=\"%Y-%b-%d %H:%M:%S,%%03d\" TRACE_SHOW=\"%H%x%N %T %e %l %L %m\" trace_cntl show | trace_delta -ct 1 -d 1" );
 
-	std::cout << "\nOne could try the same with TDAQ_ERS_VERBOSITY_LEVEL=2 or 3\n";
+	LOG_INFO() << "\nOne could try the same with TDAQ_ERS_VERBOSITY_LEVEL=2 or 3\n";
 
-	std::cout << "\nNow, fast multithread...\n";
-	const int num_threads=5;
-	std::thread threads[num_threads];
+	LOG_INFO() << "\nNow, fast multithread...\n";
+	const int kNumThreads=5;
+	std::thread threads[kNumThreads];
 	int spinlock=1;
-	for (int uu=0; uu<num_threads; ++uu)
+	for (int uu=0; uu<kNumThreads; ++uu)
 		threads[uu] = std::thread(ex_thread,&spinlock,uu);
 
 	usleep(20000);
 	spinlock = 0;
 
-	for (unsigned uu=0; uu<num_threads; ++uu)
+	for (unsigned uu=0; uu<kNumThreads; ++uu)
 		threads[uu].join();
 
-	std::cout << "\ntshow follows:\n\n";
+	LOG_INFO() << "\ntshow follows:\n\n";
 	system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %e %L %R %m\" trace_cntl show -c 25 | trace_delta -ct 1 -d 1" );
 
 	throw( appframework::MyExit(ERS_HERE) );
