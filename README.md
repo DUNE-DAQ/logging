@@ -21,3 +21,14 @@ For logging, six streamer macros are provided:
 5. LOG_LOG()
 6. LOG_DEBUG(lvl)
 
+~~~cpp
+LOG_ERROR() << ers::CantOpenFile2(ERS_HERE,"My_Error_FileName");
+~~~
+or
+~~~cpp
+LOG_DEBUG(0) << "general message";
+~~~
+or
+~~~cpp
+LOG_DEBUG(0) << ers::Message(ERS_HERE,"My_Warn_Message with ignored macro param");
+~~~
