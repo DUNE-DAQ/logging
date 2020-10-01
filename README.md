@@ -14,12 +14,12 @@ ERS provides:
 Users should be able to use the Assertion Macros from ERS and also declare Custom Issues. The issues can be used in logging and exception processing.
 
 For logging, six streamer macros are provided:
-1. LOG_FATAL()
-2. LOG_ERROR()
-3. LOG_WARNING()
-4. LOG_INFO()
-5. LOG_LOG()
-6. LOG_DEBUG(lvl)
+1. LOG_FATAL()     << ers::Issue
+2. LOG_ERROR()     << ers::Issue
+3. LOG_WARNING()   << ers::Issue
+4. LOG_INFO()      << ers::Issue or basic string/args
+5. LOG_LOG()       << ers::Issue or basic string/args
+6. LOG_DEBUG(lvl)  << ers::Issue or basic string/args
 
 ~~~cpp
 LOG_ERROR() << ers::CantOpenFile2(ERS_HERE,"My_Error_FileName");
