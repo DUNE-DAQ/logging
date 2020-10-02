@@ -8,10 +8,12 @@
 #ifndef LOGGING_INCLUDE_LOGGING_LOGGER_HPP_
 #define LOGGING_INCLUDE_LOGGING_LOGGER_HPP_
 
-#if !defined(TDAQ_PACKAGE_NAME) && defined(TRACE_NAME)
-#	define TDAQ_PACKAGE_NAME TRACE_NAME
-#elif !defined(TRACE_NAME) && defined(TDAQ_PACKAGE_NAME)
-#	define TRACE_NAME TDAQ_PACKAGE_NAME
+#if !defined(ERS_PACKAGE) && defined(TRACE_NAME)
+#	define ERS_PACKAGE TRACE_NAME
+#elif !defined(TRACE_NAME) && defined(ERS_PACKAGE)
+#	define TRACE_NAME ERS_PACKAGE
+#else
+//  defaults will be used
 #endif
 
 #include <string>

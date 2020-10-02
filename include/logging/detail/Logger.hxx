@@ -15,6 +15,7 @@
 #	define traceLvls_s      traceNamLvls_s
 #	define traceLvls_p      traceNamLvls_p
 #	define trace_name2TID	name2TID
+#	define trace_name(_NAME_,_file_,bufptr,bufsiz) trace_path_components(_file_,1)
 #endif
 
 #if defined(__has_feature)
