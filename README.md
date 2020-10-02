@@ -33,11 +33,10 @@ or
 LOG_DEBUG(0) << ers::Message(ERS_HERE,"My_Warn_Message with ignored macro param");
 ~~~
 
-# Building and basic_functionality using development 
+## Building and basic_functionality using development version (2020-Oct-02) of quick-start.sh
 
 Ref. https://github.com/DUNE-DAQ/appfwk/wiki/Compiling-and-running
 
-Instructions updated 2020-Oct-02
 ```
 # in a new/empty development directory:
 curl -O https://raw.githubusercontent.com/DUNE-DAQ/daq-buildtools/develop/bin/quick-start.sh
