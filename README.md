@@ -32,3 +32,25 @@ or
 ~~~cpp
 LOG_DEBUG(0) << ers::Message(ERS_HERE,"My_Warn_Message with ignored macro param");
 ~~~
+
+# Building and basic_functionality using development 
+
+Ref. https://github.com/DUNE-DAQ/appfwk/wiki/Compiling-and-running
+
+Instructions updated 2020-Oct-02
+```
+# in a new/empty development directory:
+curl -O https://raw.githubusercontent.com/DUNE-DAQ/daq-buildtools/develop/bin/quick-start.sh
+chmod +x quick-start.sh
+./quick-start.sh
+. ./setup_build_environment
+cd sourcecode
+git clone https://github.com/DUNE-DAQ/appfwk.git
+git clone https://github.com/DUNE-DAQ/logging.git
+cd ..
+./build_daq_software.sh --install
+```
+After the above, one can, referencing sourcecode/logging/test/basic_functionality_example.cxx, execute:
+```
+install/logging/bin/basic_functionality_example
+```
