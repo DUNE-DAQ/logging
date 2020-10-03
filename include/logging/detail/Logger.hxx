@@ -244,10 +244,8 @@ struct erstraceStream : public OutputStream {
 			}
 # if TRACE_REVNUM >= 1394
 			struct { char tn[TRACE_TN_BUFSZ]; } _trc_;
-			if (TRACE_INIT_CHECK(trace_name(TRACE_NAME,issue.context().file_name(),_trc_.tn,sizeof(_trc_.tn)))) {
-# else
-			if (TRACE_INIT_CHECK(TRACE_NAME)) {
 # endif
+			if (TRACE_INIT_CHECK(trace_name(TRACE_NAME,issue.context().file_name(),_trc_.tn,sizeof(_trc_.tn)))) {
 				if (traceControl_rwp->mode.bits.M && (traceLvls_p[traceTID].M & TLVLMSK(lvl_))) {
 					struct timeval lclTime;
 					std::chrono::system_clock::time_point tp{issue.ptime()};

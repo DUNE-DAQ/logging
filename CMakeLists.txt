@@ -19,5 +19,7 @@ add_executable( basic_functionality_example test/basic_functionality_example.cxx
 target_link_libraries( basic_functionality_example ${LOGGING_DEPENDENCIES} pthread )
 add_executable( performance test/performance.cxx )
 target_link_libraries( performance ${LOGGING_DEPENDENCIES} )
+add_executable( six_streams test/six_streams.cxx )
+target_link_libraries( six_streams ${LOGGING_DEPENDENCIES} )
 
-daq_install( TARGETS basic_functionality_example logging )
+daq_install( TARGETS basic_functionality_example six_streams logging )
