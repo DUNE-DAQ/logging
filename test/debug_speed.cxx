@@ -8,6 +8,9 @@
  */
 
 #include <logging/Logger.hpp>
+#if TRACE_REVNUM < 1394
+#	define TRACE_NAME trace_path_components(__FILE__,1)
+#endif
 
 ERS_DECLARE_ISSUE(ers,		// namespace
                   File2,		// issue class name
@@ -24,7 +27,7 @@ int main(int argc, char *argv[])
 	setenv("TRACE_FILE",tfile.c_str(),0);
 
 	static const int dbglvl=1;
-	setenv("TRACE_LVLM",std::to_string(1ULL<<(TLVL_DEBUG+dbglvl)).c_str(),0); // make sure the specific debug lvl used in enabled
+	setenv("TRACE_LVLM",std::to_string(1ULL<<(TLVL_DEBUG+dbglvl)).c_str(),0); // make sure the specific debug lvl used is enabled
 
 	if (argc > 1) {
 		std::vector<std::string> arguments(argv + 1, argv + argc);
@@ -43,7 +46,7 @@ int main(int argc, char *argv[])
 		LOG_DEBUG(dbglvl) << "message file does not exist";
 	
 	LOG_INFO() << "\ntshow follows:\n\n";
-	system( "trace_cntl show | trace_delta -ct 1 -d 1" );
+	system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %e %L %R %m\" trace_cntl show | trace_delta -ct 1 -d 1" );
 
 	return (0);
 }   // main

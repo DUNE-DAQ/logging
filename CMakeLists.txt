@@ -21,5 +21,7 @@ add_executable( performance test/performance.cxx )
 target_link_libraries( performance ${LOGGING_DEPENDENCIES} )
 add_executable( six_streams test/six_streams.cxx )
 target_link_libraries( six_streams ${LOGGING_DEPENDENCIES} )
+add_executable( debug_speed test/debug_speed.cxx )
+target_link_libraries( debug_speed ${LOGGING_DEPENDENCIES} )
 
-daq_install( TARGETS basic_functionality_example six_streams logging )
+daq_install( TARGETS basic_functionality_example six_streams debug_speed logging )
