@@ -29,5 +29,8 @@ install(TARGETS six_streams EXPORT ${DAQ_PROJECT_EXPORTNAME} )
 daq_add_application( debug_speed debug_speed.cxx TEST LINK_LIBRARIES ${LOGGING_DEPENDENCIES} )
 install(TARGETS debug_speed EXPORT ${DAQ_PROJECT_EXPORTNAME} )
 
+daq_add_application( exception_example exception_example.cxx TEST LINK_LIBRARIES ${LOGGING_DEPENDENCIES} )
+install(TARGETS exception_example EXPORT ${DAQ_PROJECT_EXPORTNAME} )
+
 
 daq_install()

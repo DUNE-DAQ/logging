@@ -7,16 +7,18 @@
  *
   cd build/logging
   make clean basic_functionality_example CXX_DEFINES=-DTRY_COMPILE=0
-  test/basic_functionality_example
+  install/logging/bin/basic_functionality_example
   or
-  TDAQ_ERS_VERBOSITY_LEVEL=2 test/basic_functionality_example
+  TDAQ_ERS_VERBOSITY_LEVEL=2 install/logging/bin/basic_functionality_example
   or
-  TRACE_LVLS=-1 test/basic_functionality_example
+  TRACE_LVLS=-1 install/logging/bin/basic_functionality_example
  */
 
 #include <string>
 #include <vector>
 #define TRACE_NAME "basic_functionality_example" // NOLINT next version (after v3_15_09) will do this automatically
+#define ERS_PACKAGE "Logging"					 // Qualifier
+#define TDAQ_PACKAGE_NAME "Logging_"
 #include <logging/Logger.hpp>
 #include <ers/Issue.h>
 
@@ -31,12 +33,12 @@ ERS_DECLARE_ISSUE(ers,		// namespace
 * not be opened by any reason.
 */
 ERS_DECLARE_ISSUE_BASE(ers,	// namespace
-                           CantOpenFile2, // issue class name
-                           ers::File2,	 // base class name
-                           "Can not open \"" << file_name << "\" file", // message
-                           ((const char *)file_name ), // base class attributes
-                           ERS_EMPTY				   // no attributes in this class
-                           )
+                       CantOpenFile2, // issue class name
+                       ers::File2,	 // base class name
+                       "Can not open \"" << file_name << "\" file arg2=" << arg2 << " arg3=" << arg3, // message
+                       ((const char *)file_name ), // base class attributes
+                       ((int) arg2) ((const char*) arg3)			   // two attributes in this class
+                       )
 
 ERS_DECLARE_ISSUE(appframework, // namespace
                       CommandNotRegistered2, // issue class name
@@ -75,22 +77,26 @@ int main(int argc, char *argv[])
 	TRACE_CNTL("reset");
 
 	Logger().setup(arguments);
-	LOG_INFO()  << ers::Message(ERS_HERE,"Using TRACE_FILE="+tfile);
+	ers::Message message(ERS_HERE,"Using TRACE_FILE="+tfile);
+	message.add_qualifier( "Logging_qual2" );
+	LOG_INFO()  << message;
 	LOG_LOG()   << ers::Message(ERS_HERE,"A LOG_LOG()    using ers::Message - The Logger has just been setup.");
-	LOG_LOG()   << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_LOG");
-	LOG_INFO()  << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_INFO");
+	LOG_LOG()   << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_LOG", 1, "hi");
+
+	LOG_INFO() << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_INFO", 2, "there");
+	ers::info( ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_INFO",3,"then") );
 	LOG_INFO() << "The Logger has just been setup and this is an Info log message (LOG_INFO).";
 
 	//----------------------------------------
 
-	LOG_FATAL() << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName - usually associated with throw or exit");
+	LOG_FATAL() << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName - usually associated with throw or exit",4,"four");
 	//ers::error( ers::Message( ERS_HERE, "this is ers::error( ers::Message( ERS_HERE, \"this is ...\" ) )" ) );
-	LOG_ERROR() << ers::CantOpenFile2(ERS_HERE,"My_Error_FileName");
+	LOG_ERROR() << ers::CantOpenFile2(ERS_HERE,"My_Error_FileName",5,"five");
 #   if TRY_COMPILE & 0x1
 	// see what happens with: make clean install CXX_DEFINES=-DTRY_COMPILE=1
 	LOG_ERROR() << "error with just a string";
 #   endif
-	LOG_WARNING() << ers::CantOpenFile2(ERS_HERE,"My_Warn_FileName");
+	LOG_WARNING() << ers::CantOpenFile2(ERS_HERE,"My_Warn_FileName",6,"six");
 	LOG_WARNING(ignore) << ers::Message(ERS_HERE,"My_Warn_Message with ignored macro param");
 
 	//----------------------------------------
@@ -100,11 +106,11 @@ int main(int argc, char *argv[])
 	LOG_LOG() << "LOG_LOG() stating LOG_DEBUG(n)'s follow -- they must be enabled via trace_cntl or TDAQ_ERS_DEBUG_LEVEL";
 
 	LOG_DEBUG(6)<< ers::Message(ERS_HERE,"A LOG_DEBUG(6) using ers::Message - The Logger has just been setup. ERS bug - 1st DEBUG is always DEBUG_0");
-	LOG_DEBUG(6)<< ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_DEBUG_6");
+	LOG_DEBUG(6)<< ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_DEBUG_6",7,"seven");
 	LOG_DEBUG(0) << "hello - debug level 0";
 	LOG_DEBUG(5) << "hello - debug level 5";
 	LOG_DEBUG(6) << "hello - debug level 6";
-	LOG_DEBUG(7) << ers::CantOpenFile2(ERS_HERE,"My_d07_FileName");
+	LOG_DEBUG(7) << ers::CantOpenFile2(ERS_HERE,"My_d07_FileName",8,"eight");
 
 	LOG_DEBUG(8,"TEST2") << "testing name argument";
 	LOG_DEBUG(55) << "debug lvl 55";

@@ -64,7 +64,7 @@ static void verstrace_user(struct timeval *, int TID, uint8_t lvl, const char* i
 	// LocalContext args: 1-"package_name" 2-"file" 3-"line" 4-"pretty_function" 5-"include_stack"
 	ers::LocalContext lc(
 # if TRACE_REVNUM >= 1322
-						 reinterpret_cast<char*>(idx2namsPtr(TID)+1),
+						 reinterpret_cast<char*>(idx2namsPtr(TID)),
 # else
 						 traceNamLvls_p[TID].name,
 # endif
