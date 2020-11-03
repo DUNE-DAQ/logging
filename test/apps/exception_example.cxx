@@ -16,10 +16,17 @@ where <num> is a number currently 0.\n\
 #include <ers/SampleIssues.h>
 #include <logging/Logger.hpp>
 
+class XX
+{
+	~XX() { LOG_DEBUG(1) << "dtor object after raise/throw"; }
+};
+
 void foo( int except_int )
 {
+	XX xx();
 	switch( except_int ) {
 	case 0:
+		LOG_DEBUG(1) << "raising ers::PermissionDenied " << "somefilename";
 		ers::PermissionDenied permdenied(ERS_HERE, "somefilename", 0644 );
 		permdenied.raise();
 		break;
@@ -29,27 +36,23 @@ void foo( int except_int )
 int main(  int	argc, char	*argv[] )
 {
 	if (argc != 2) { printf(USAGE); exit(1); }
-	try
-    {
+
+	std::vector<std::string> arguments(argv + 1, argv + argc);
+	Logger().setup(arguments);
+
+	LOG_DEBUG(1) << "trying foo";
+	try {
         foo( strtoul(argv[1],NULL,0) );
-    }
-    catch ( ers::PermissionDenied & ex )
-    {
+    } catch ( ers::PermissionDenied & ex ) {
         ers::CantOpenFile issue( ERS_HERE, ex.get_file_name(), ex );
         ers::warning( issue );
-    }
-    catch ( ers::FileDoesNotExist & ex )
-    {
+    } catch ( ers::FileDoesNotExist & ex ) {
         ers::CantOpenFile issue( ERS_HERE, ex.get_file_name(), ex );
         ers::warning( issue );
-    }
-    catch ( ers::Issue & ex )
-    {
+    } catch ( ers::Issue & ex ) {
         ERS_DEBUG( 0, "Unknown issue caught: " << ex );
         ers::error( ex );
-    }
-    catch ( std::exception & ex )
-    {
+    } catch ( std::exception & ex ) {
         ers::CantOpenFile issue( ERS_HERE, "unknown", ex );
         ers::warning( issue );
     }

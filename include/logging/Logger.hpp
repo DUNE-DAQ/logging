@@ -11,7 +11,7 @@
 #if !defined(ERS_PACKAGE) && defined(TRACE_NAME)
 #	define ERS_PACKAGE TRACE_NAME
 #elif !defined(TRACE_NAME) && defined(ERS_PACKAGE)
-#	define TRACE_NAME ERS_PACKAGE
+//#	define TRACE_NAME ERS_PACKAGE   // this may cause TRACE_NAME to be "unknown" (if ers/SampleIssues.h included before Logger.hpp)
 #else
 //  defaults will be used
 #endif
@@ -60,7 +60,11 @@ public:
 		setenv("TDAQ_ERS_INFO",   "lstdout",0);
 		setenv("TDAQ_ERS_LOG",    "lstdout",0);
 		setenv("TDAQ_ERS_DEBUG",  "lstdout",0);
+
 		//setenv("TDAQ_APPLICATION_NAME","XYZZY",0);
+		std::ostringstream out;
+		out << (1ULL<<(TLVL_DEBUG+2))-1;
+		setenv("TRACE_LVLM",out.str().c_str(),0);
 
 		// Avoid DEBUG_1 [ers::PluginManager::PluginManager(...) at ...Library mtsStreams can not be loaded because libmtsStreams.so: cannot open shared object file: No such file or directory
 		// by only setting debug_level AFTER first ers::debug message

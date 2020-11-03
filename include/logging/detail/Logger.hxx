@@ -242,9 +242,9 @@ struct erstraceStream : public OutputStream {
 			case ers::Error:       lvl_=TLVL_ERROR;         break;
 			case ers::Fatal:       lvl_=TLVL_FATAL;         break;
 			}
-# if TRACE_REVNUM >= 1394
+#			if TRACE_REVNUM >= 1394
 			struct { char tn[TRACE_TN_BUFSZ]; } _trc_;
-# endif
+#			endif
 			if (TRACE_INIT_CHECK(trace_name(TRACE_NAME,issue.context().file_name(),_trc_.tn,sizeof(_trc_.tn)))) {
 				if (traceControl_rwp->mode.bits.M && (traceLvls_p[traceTID].M & TLVLMSK(lvl_))) {
 					struct timeval lclTime;
@@ -254,11 +254,35 @@ struct erstraceStream : public OutputStream {
 					lclTime.tv_sec  = micros.count() / 1000000;
 					lclTime.tv_usec = micros.count() % 1000000;
 					int traceID = trace_name2TID( trace_name(TRACE_NAME,issue.context().file_name(),_trc_.tn,sizeof(_trc_.tn)) );
+					std::string complete_message = issue.message();
+					const ers::Issue *issp = &issue;
+					while ((issp=issp->cause())) {
+						char fbuf[0x100], tbuf[0x40];
+						int strip_ns=1;
+						tp = issp->ptime();
+						std::chrono::milliseconds millis
+							= std::chrono::duration_cast<std::chrono::milliseconds>(tp.time_since_epoch());
+						struct tm tm_s;
+						time_t secs  = millis.count() / 1000;
+						localtime_r(&secs, &tm_s);
+						if (strftime(tbuf, sizeof(tbuf), "%Y-%b-%d %H:%M:%S", &tm_s) == 0)
+							tbuf[0]= '\0';
+						complete_message += "\n\tcaused by: " + std::string(tbuf);
+						int milliseconds = millis.count() % 1000;
+						sprintf(tbuf,",%03d ",milliseconds);
+						complete_message += std::string(tbuf);
+						trace_func_to_short_func(issp->context().function_name(), fbuf, sizeof(fbuf), strip_ns);
+						complete_message += ers::to_string(issp->severity())
+							+ " [" + fbuf + " at "
+							+ trace_path_components(issp->context().file_name(),0)
+							+ ":" + std::to_string(issp->context().line_number())
+							+ "] " + issp->message();
+					}
 					trace(&lclTime, traceID, lvl_, issue.context().line_number(),
-# if TRACE_REVNUM >= 1322
+#					if TRACE_REVNUM >= 1322
 					      issue.context().function_name(),
-# endif
-					      0 TRACE_XTRA_PASSED, issue.message().c_str());
+#					endif
+					      0 TRACE_XTRA_PASSED, complete_message.c_str());
 				}
             }
 			chained().write( issue );
