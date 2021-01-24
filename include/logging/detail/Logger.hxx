@@ -233,7 +233,7 @@ struct erstraceStream : public OutputStream {
         void write( const ers::Issue & issue )
         {
 			ers::Severity sev = issue.severity();
-			uint8_t lvl_;
+			uint8_t lvl_=TLVL_DEBUG;
 			switch (sev.type) {
 			case ers::Debug:       lvl_=TLVL_DEBUG+sev.rank;break;
 			case ers::Log:         lvl_=TLVL_LOG;           break;
