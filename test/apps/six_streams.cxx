@@ -22,14 +22,12 @@ int main(int argc, char *argv[])
 	}
 
 	// usually, one of these (group of 3) do not come first
-	LOG_FATAL()  << ers::FileDoesNotExist( ERS_HERE, "fatal file" );
-	LOG_ERROR()  << ers::FileDoesNotExist( ERS_HERE, "error file" );
-	LOG_WARNING()<< ers::FileDoesNotExist( ERS_HERE, "warning file" );
-
-	LOG_INFO()  << "Hello info stream - Note: LOG_{FATAL,ERROR,WARNING,INFO} slow path always enabled";
-	LOG_LOG()   << "Hello log stream";
-	LOG_DEBUG(0,1)<< "Hello debug%d stream arg=" << 3;
-	LOG_DEBUG(1) << "Hello debug stream arg=" << 3;
+	ers::fatal(  ers::FileDoesNotExist( ERS_HERE, "fatal file" ) );
+	ers::error(  ers::FileDoesNotExist( ERS_HERE, "error file" ) );
+	ers::warning(ers::FileDoesNotExist( ERS_HERE, "warning file") );
+	ers::info(   ers::FileDoesNotExist( ERS_HERE, "info file") );
+	TLOG()   << "Hello log stream";
+	TLOG_DEBUG(1) << "Hello debug stream arg=" << 3;
 
 	return (0);
 }   // main

@@ -8,9 +8,6 @@
  */
 
 #include <logging/Logger.hpp>
-#if TRACE_REVNUM < 1394
-#	define TRACE_NAME trace_path_components(__FILE__,1)
-#endif
 
 ERS_DECLARE_ISSUE(ers,		// namespace
                   File2,		// issue class name
@@ -37,15 +34,15 @@ int main(int argc, char *argv[])
 	ers::File2 efile2(ERS_HERE, "constructed file" );
 
 	for (int ii=0; ii<10; ++ii)
-		LOG_DEBUG(dbglvl) << ers::File2( ERS_HERE, "construct file" );
+		TLOG_DEBUG(dbglvl) << ers::File2( ERS_HERE, "construct file" );
 
 	for (int ii=0; ii<10; ++ii)
-		LOG_DEBUG(dbglvl) << efile2;
+		TLOG_DEBUG(dbglvl) << efile2;
 
 	for (int ii=0; ii<10; ++ii)
-		LOG_DEBUG(dbglvl) << "message file does not exist";
+		TLOG_DEBUG(dbglvl) << "message file does not exist";
 	
-	LOG_INFO() << "\ntshow follows:\n\n";
+	TLOG() << "\ntshow follows:\n\n";
 	system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %e %L %R %m\" trace_cntl show | trace_delta -ct 1 -d 1" );
 
 	return (0);

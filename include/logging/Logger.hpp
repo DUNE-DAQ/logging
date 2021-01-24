@@ -30,11 +30,25 @@
 // trace_cntl) would use TRACE_*_LVLSTRS but is not being built.
 #include "TRACE/trace.h"
 
-#if TRACE_REVNUM < 1322
-// Older TRACE does not have FATAL and LOG, map those to ERROR and INFO
-#  define TLVL_FATAL TLVL_ERROR
-#  define TLVL_LOG   TLVL_INFO
-#endif
+
+//-----------------------------------------------------------------------------
+
+
+/*  6 logging "streams" are defined: fatal, error, warning, info, log and debug.
+    The first 4 are accessed via the ers:: methods with a TRACE destination added.
+    THe last 2 are accessed via TRACE macros with an ers:: user method configured.
+ */
+// Redefine TRACE's TLOG to only take 2 optional args: name and format control
+#undef TLOG
+#define TLOG(...)  TRACE_STREAMER(TLVL_LOG, \
+								  _tlog_ARG2(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
+								  _tlog_ARG3(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
+								  1, SL_FRC(TLVL_LOG) )
+
+
+
+
+
 
 #include <logging/detail/Logger.hxx> // needs TLVL_* definitions
 
@@ -86,20 +100,11 @@ public:
 };
 
 
-
-// The following Streamer macros a) only accept Issue objects, and b) ignore any params
-#define LOG_FATAL(...)   ErsFatalStreamer()
-#define LOG_ERROR(...)   ErsErrorStreamer()
-#define LOG_WARNING(...) ErsWarningStreamer()
-
 // The following Stream macros a) accept strings or Issue objects, and b)
 // accept optional arguments - NAME and/or "noDelayedFmt"
 // The TRACE_STREAMER args are: 1-lvl, 2,3-nam_or_fmt, 4-slow_enabled, 5-slow_force
-#define LOG_LOG(...)  TRACE_STREAMER(TLVL_LOG, \
-										  _tlog_ARG2(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
-										  _tlog_ARG3(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
-										  1, SL_FRC(TLVL_LOG) )
-#define LOG_INFO(...) TRACE_STREAMER(TLVL_INFO, \
+#undef  TLOG_INFO
+#define TLOG_INFO(...) TRACE_STREAMER(TLVL_INFO, \
 										  _tlog_ARG2(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
 										  _tlog_ARG3(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
 										  1, SL_FRC(TLVL_INFO) )
@@ -114,7 +119,8 @@ public:
 #               pragma GCC system_header
 #       endif
 
-#define LOG_DEBUG(lvl,...) TRACE_STREAMER(((TLVL_DEBUG+lvl)<64)?TLVL_DEBUG+lvl:63, \
+#undef  TLOG_DEBUG
+#define TLOG_DEBUG(lvl,...) TRACE_STREAMER(((TLVL_DEBUG+lvl)<64)?TLVL_DEBUG+lvl:63, \
 										  tlog_ARG2(not_used, ##__VA_ARGS__,0,need_at_least_one), \
 										  tlog_ARG3(not_used, ##__VA_ARGS__,0,"",need_at_least_one), \
 										  1, 0 )

@@ -18,7 +18,7 @@ where <num> is a number currently 0.\n\
 
 class XX
 {
-	~XX() { LOG_DEBUG(1) << "dtor object after raise/throw"; }
+	~XX() { TLOG_DEBUG(1) << "dtor object after raise/throw"; }
 };
 
 void foo( int except_int )
@@ -26,7 +26,7 @@ void foo( int except_int )
 	XX xx();
 	switch( except_int ) {
 	case 0:
-		LOG_DEBUG(1) << "raising ers::PermissionDenied " << "somefilename";
+		TLOG_DEBUG(1) << "raising ers::PermissionDenied " << "somefilename";
 		ers::PermissionDenied permdenied(ERS_HERE, "somefilename", 0644 );
 		permdenied.raise();
 		break;
@@ -40,7 +40,7 @@ int main(  int	argc, char	*argv[] )
 	std::vector<std::string> arguments(argv + 1, argv + argc);
 	Logger().setup(arguments);
 
-	LOG_DEBUG(1) << "trying foo";
+	TLOG_DEBUG(1) << "trying foo";
 	try {
         foo( strtoul(argv[1],NULL,0) );
     } catch ( ers::PermissionDenied & ex ) {
@@ -50,7 +50,7 @@ int main(  int	argc, char	*argv[] )
         ers::CantOpenFile issue( ERS_HERE, ex.get_file_name(), ex );
         ers::warning( issue );
     } catch ( ers::Issue & ex ) {
-        ERS_DEBUG( 0, "Unknown issue caught: " << ex );
+        TLOG_DEBUG( 0 ) << "Unknown issue caught: " << ex;
         ers::error( ex );
     } catch ( std::exception & ex ) {
         ers::CantOpenFile issue( ERS_HERE, "unknown", ex );
