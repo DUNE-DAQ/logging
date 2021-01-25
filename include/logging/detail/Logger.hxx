@@ -10,14 +10,6 @@
 
 #include <stdlib.h>				// setenv
 
-#if TRACE_REVNUM < 1394
-#	define TRACE_SNPRINTED  SNPRINTED
-#	define traceLvls_s      traceNamLvls_s
-#	define traceLvls_p      traceNamLvls_p
-#	define trace_name2TID	name2TID
-#	define trace_name(_NAME_,_file_,bufptr,bufsiz) trace_path_components(_file_,1)
-#endif
-
 #if defined(__has_feature)
 #  if __has_feature(thread_sanitizer)
 __attribute__((no_sanitize("thread")))
@@ -101,7 +93,7 @@ static void erstrace_user(struct timeval *tvp, int TID, uint8_t lvl, const char*
 
 
 // The following allow an ers::Issue to be streamed into LOG_INFO(), LOG_LOG(), LOG_DEBUG(N)
-inline TraceStreamer& operator<<(TraceStreamer& x, const ers::Issue &r)
+inline void operator<<(TraceStreamer& x, const ers::Issue &r)
 {
     if (x.do_m) {
 		x.line_ = r.context().line_number();
@@ -113,9 +105,8 @@ inline TraceStreamer& operator<<(TraceStreamer& x, const ers::Issue &r)
 		else                        ers::debug( r, x.lvl_-TLVL_DEBUG );	\
 		x.do_s = 0;
 	}
-	return x;
 }
-inline TraceStreamer& operator<<(TraceStreamer& x, const ers::Message &r)
+inline void operator<<(TraceStreamer& x, const ers::Message &r)
 {
 	if (x.do_m) {
 		x.line_ = r.context().line_number();
@@ -127,7 +118,6 @@ inline TraceStreamer& operator<<(TraceStreamer& x, const ers::Message &r)
 		else                        ers::debug( r, x.lvl_-TLVL_DEBUG );	\
 		x.do_s = 0;
 	}
-	return x;
 }
 
 // Ref. ers/internal/IssueDeclarationMacro.h
@@ -242,9 +232,8 @@ struct erstraceStream : public OutputStream {
 			case ers::Error:       lvl_=TLVL_ERROR;         break;
 			case ers::Fatal:       lvl_=TLVL_FATAL;         break;
 			}
-#			if TRACE_REVNUM >= 1394
+			std::cout << "XXXXXXXXXXXXXXXXXXXXXX\n";
 			struct { char tn[TRACE_TN_BUFSZ]; } _trc_;
-#			endif
 			if (TRACE_INIT_CHECK(trace_name(TRACE_NAME,issue.context().file_name(),_trc_.tn,sizeof(_trc_.tn)))) {
 				if (traceControl_rwp->mode.bits.M && (traceLvls_p[traceTID].M & TLVLMSK(lvl_))) {
 					struct timeval lclTime;
@@ -279,9 +268,7 @@ struct erstraceStream : public OutputStream {
 							+ "] " + issp->message();
 					}
 					trace(&lclTime, traceID, lvl_, issue.context().line_number(),
-#					if TRACE_REVNUM >= 1322
 					      issue.context().function_name(),
-#					endif
 					      0 TRACE_XTRA_PASSED, complete_message.c_str());
 				}
             }
