@@ -10,6 +10,10 @@
 
 #include <stdlib.h>				// setenv
 
+
+/*  verstrace_user
+    Only log and debug "levels" (or "streams") are supported
+ */
 #if defined(__has_feature)
 #  if __has_feature(thread_sanitizer)
 __attribute__((no_sanitize("thread")))
@@ -55,20 +59,16 @@ static void verstrace_user(struct timeval *, int TID, uint8_t lvl, const char* i
 	}
 	// LocalContext args: 1-"package_name" 2-"file" 3-"line" 4-"pretty_function" 5-"include_stack"
 	ers::LocalContext lc(
-# if TRACE_REVNUM >= 1322
 						 reinterpret_cast<char*>(idx2namsPtr(TID)),
-# else
-						 traceNamLvls_p[TID].name,
-# endif
 						 file, line, function, DEBUG_FORCED );
 	//std::ostringstream ers_report_impl_out_buffer;
 	//ers_report_impl_out_buffer << outp;
-	if      (lvl==TLVL_INFO) ers::info(  ers::Message(lc,outp) );						\
-	else if (lvl==TLVL_LOG)  ers::log(   ers::Message(lc,outp) );						\
-	else                     ers::debug( ers::Message(lc,outp),lvl-TLVL_DEBUG );		\
+	if (lvl < TLVL_DEBUG) { // NOTE: at least currently, TLVL_LOG is numerically 1 less than TLVL_DEBUG
+		ers::log(   ers::Message(lc,outp) );
+	} else
+		ers::debug( ers::Message(lc,outp),lvl-TLVL_DEBUG );
 }
 
-// NOTE: lvl translation occurs
 SUPPRESS_NOT_USED_WARN
 static void erstrace_user(struct timeval *tvp, int TID, uint8_t lvl, const char* insert, const char* file, int line, const char* function, uint16_t nargs, const char *msg, ...)
 {
@@ -92,7 +92,7 @@ static void erstrace_user(struct timeval *tvp, int TID, uint8_t lvl, const char*
 
 
 
-// The following allow an ers::Issue to be streamed into LOG_INFO(), LOG_LOG(), LOG_DEBUG(N)
+// The following allow an ers::Issue to be streamed into TLOG() or TLOG_DEBUG(N)
 inline void operator<<(TraceStreamer& x, const ers::Issue &r)
 {
     if (x.do_m) {
@@ -232,7 +232,6 @@ struct erstraceStream : public OutputStream {
 			case ers::Error:       lvl_=TLVL_ERROR;         break;
 			case ers::Fatal:       lvl_=TLVL_FATAL;         break;
 			}
-			std::cout << "XXXXXXXXXXXXXXXXXXXXXX\n";
 			struct { char tn[TRACE_TN_BUFSZ]; } _trc_;
 			if (TRACE_INIT_CHECK(trace_name(TRACE_NAME,issue.context().file_name(),_trc_.tn,sizeof(_trc_.tn)))) {
 				if (traceControl_rwp->mode.bits.M && (traceLvls_p[traceTID].M & TLVLMSK(lvl_))) {
