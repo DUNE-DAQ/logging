@@ -68,6 +68,17 @@ public:
 	{
 		// need to get tricky to short circuit DEBUG message (at "level 1") about
 		//    libmtsStreams.so: cannot open shared object file: No such file or directory		
+		/*  Example: production env:
+			export TDAQ_ERS_ERROR="erstrace,throttle(30,100),lstderr,mts"
+			export TDAQ_ERS_FATAL="erstrace,lstderr,mts"
+			export TDAQ_ERS_WARNING="erstrace,throttle(30,100),lstderr,mts"
+			export TDAQ_ERS_INFO="erstrace,throttle(30,100),lstdout,mts"
+
+			export TDAQ_ERS_LOG="lstdout"
+			export TDAQ_ERS_DEBUG="lstdout"
+
+			export TDAQ_ERS_STREAM_LIBS="mtsStreams"
+		 */
 		setenv("TDAQ_ERS_FATAL", "erstrace,lstderr",0);
 		setenv("TDAQ_ERS_ERROR", "erstrace,throttle(30,100),lstderr",0);
 		setenv("TDAQ_ERS_WARNING","erstrace,throttle(30,100),lstderr",0);
