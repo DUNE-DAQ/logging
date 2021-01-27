@@ -145,7 +145,7 @@ inline void operator<<(TraceStreamer& x, const ers::Message &r)
 				 if (x.do_s) {											\
 					 if      (x.lvl_==TLVL_INFO) ers::info(  r );		\
 					 else if (x.lvl_==TLVL_LOG)  ers::log(   r );		\
-					 else                        ers::debug( r, x.lvl_ ); \
+					 else                        ers::debug( r, x.lvl_-TLVL_DEBUG ); \
 					 x.do_s = 0;										\
 				 }														\
                  return x; \

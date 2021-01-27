@@ -20,15 +20,11 @@
 #include <vector>
 #include "ers/ers.h"
 #include <ers/OutputStream.h>
-#define TRACE_LOG_FUN_PROTO \
-  static void erstrace_user(struct timeval *, int, uint8_t, const char*, const char*, int, const char*, uint16_t nargs, const char *msg, ...); \
-  static void erstrace_user(struct timeval *, int, uint8_t, const char*, const char*, int, const char*, uint16_t nargs, const std::string& msg, ...)
+#include "TRACE/trace.h"
+
 #undef TRACE_LOG_FUNCTION
 #define TRACE_LOG_FUNCTION erstrace_user
-// NOTE: TRACE_*_LVLSTRS would only affect the application slow path, which
-// in this case, is not applicable. Memory buffer formatted output (via
-// trace_cntl) would use TRACE_*_LVLSTRS but is not being built.
-#include "TRACE/trace.h"
+
 
 
 //-----------------------------------------------------------------------------
