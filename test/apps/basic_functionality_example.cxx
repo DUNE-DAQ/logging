@@ -7,11 +7,13 @@
  *
   cd build/logging
   make clean basic_functionality_example CXX_DEFINES=-DTRY_COMPILE=0
-  install/logging/bin/basic_functionality_example
+
+Run:
+    install/logging/bin/basic_functionality_example
   or
-  TDAQ_ERS_VERBOSITY_LEVEL=2 install/logging/bin/basic_functionality_example
+    TDAQ_ERS_VERBOSITY_LEVEL=2 install/logging/bin/basic_functionality_example
   or
-  TRACE_LVLS=-1 install/logging/bin/basic_functionality_example
+    TRACE_LVLS=-1 install/logging/bin/basic_functionality_example
  */
 
 #include <string>

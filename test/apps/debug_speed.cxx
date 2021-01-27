@@ -5,6 +5,13 @@
  * Licensing/copyright details are in the COPYING file that you should have
  * received with this code.
  *
+
+Run:
+                             debug_speed
+  or  TDAQ_ERS_DEBUG_LEVEL=2 debug_speed
+  or  TDAQ_ERS_DEBUG_LEVEL=2 debug_speed 1
+  or  TRACE_LVLS=-1          debug_speed
+  or  TRACE_LVLS=-1          debug_speed 1
  */
 
 #include <logging/Logger.hpp>
