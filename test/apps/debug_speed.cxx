@@ -7,11 +7,13 @@
  *
 
 Run:
-                             debug_speed
-  or  TDAQ_ERS_DEBUG_LEVEL=2 debug_speed
-  or  TDAQ_ERS_DEBUG_LEVEL=2 debug_speed 1
-  or  TRACE_LVLS=-1          debug_speed
-  or  TRACE_LVLS=-1          debug_speed 1
+                                           debug_speed
+  or                                       debug_speed 1  # this
+  or                TDAQ_ERS_DEBUG_LEVEL=2 debug_speed
+  or                TDAQ_ERS_DEBUG_LEVEL=2 debug_speed 1
+  or  TRACE_LVLS=-1                        debug_speed
+  or  TRACE_LVLS=-1                        debug_speed 1
+  or  TRACE_LVLS=-1 TDAQ_ERS_DEBUG_LEVEL=2 debug_speed    # or this
  */
 
 #include <logging/Logger.hpp>
