@@ -26,7 +26,6 @@
 #define TRACE_LOG_FUNCTION erstrace_user
 
 
-
 //-----------------------------------------------------------------------------
 
 
@@ -46,6 +45,9 @@
 #endif
 
 
+#undef ERS_DEBUG
+#undef ERS_INFO
+#undef ERS_LOG
 
 
 #include <logging/detail/Logger.hxx>
