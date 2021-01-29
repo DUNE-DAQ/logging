@@ -16,7 +16,7 @@ where <num> is a number: 0 - 6.
 
 #include <libgen.h>				// basename
 #include <ers/SampleIssues.h>
-#include <logging/Logger.hpp>
+#include <logging/Logging.hpp>
 #include <string>
 #include <vector>
 

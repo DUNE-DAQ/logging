@@ -21,7 +21,7 @@ Run:
 #define TRACE_NAME "basic_functionality_example" // NOLINT next version (after v3_15_09) will do this automatically
 #define ERS_PACKAGE "Logging"					 // Qualifier
 #define TDAQ_PACKAGE_NAME "Logging_"
-#include <logging/Logger.hpp>
+#include <logging/Logging.hpp>
 #include <ers/Issue.h>
 
 /** \def ers::File2 This is the base class for all file related issues.

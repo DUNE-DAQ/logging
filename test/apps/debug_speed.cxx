@@ -16,7 +16,7 @@ Run:
   or  TRACE_LVLS=-1 TDAQ_ERS_DEBUG_LEVEL=2 debug_speed    # or this
  */
 
-#include <logging/Logger.hpp>
+#include <logging/Logging.hpp>
 #include <string>
 #include <vector>
 

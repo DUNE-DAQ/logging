@@ -18,7 +18,7 @@ options:
 #include <getopt.h>             // getopt_long
 #include <libgen.h>             // basename
 
-#include <logging/Logger.hpp>
+#include <logging/Logging.hpp>
 #include <ers/SampleIssues.h>
 #include <string>
 #include <vector>

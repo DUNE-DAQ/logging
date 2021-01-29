@@ -6,7 +6,7 @@
  * received with this code.
  */
 
-#include <logging/Logger.hpp>
+#include <logging/Logging.hpp>
 
 int main(/*int	argc, char	*argv[]*/)
 {
