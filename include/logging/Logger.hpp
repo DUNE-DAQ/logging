@@ -8,14 +8,6 @@
 #ifndef LOGGING_INCLUDE_LOGGING_LOGGER_HPP_
 #define LOGGING_INCLUDE_LOGGING_LOGGER_HPP_
 
-#if !defined(ERS_PACKAGE) && defined(TRACE_NAME)
-#	define ERS_PACKAGE TRACE_NAME
-#elif !defined(TRACE_NAME) && defined(ERS_PACKAGE)
-//#	define TRACE_NAME ERS_PACKAGE   // this may cause TRACE_NAME to be "unknown" (if ers/SampleIssues.h included before Logger.hpp)
-#else
-//  defaults will be used
-#endif
-
 #include <string>
 #include <vector>
 #include "ers/ers.h"
@@ -25,11 +17,12 @@
 #undef TRACE_LOG_FUNCTION
 #define TRACE_LOG_FUNCTION erstrace_user
 
+// don't worry about ERS_PACKAGE and/or TRACE_NAME -- leave them to the user or build system
 
 //-----------------------------------------------------------------------------
 
 
-/*  6 logging "streams" are defined: fatal, error, warning, info, log and debug.
+/** 6 logging "streams" are defined: fatal, error, warning, info, log and debug.
     The first 4 are accessed via the ers:: methods with a TRACE destination added.
     THe last 2 are accessed via TRACE macros with an ers:: user method configured.
  */
@@ -44,6 +37,14 @@
 # define TLOG(...)  TRACE_STREAMER(TLVL_LOG, TLOG2(__VA_ARGS__), 0)
 #endif
 
+// TRACE's TLOG_DEBUG maybe OK, depending on the version of TRACE - check at the end of this file
+// TLOG_DBG ???
+
+#undef TLOG_ERROR
+#undef TLOG_WARNING
+#undef TLOG_INFO
+#undef TLOG_TRACE
+#undef TLOG_ARB
 
 #undef ERS_DEBUG
 #undef ERS_INFO
@@ -68,7 +69,7 @@ public:
 	{
 		// need to get tricky to short circuit DEBUG message (at "level 1") about
 		//    libmtsStreams.so: cannot open shared object file: No such file or directory		
-		/*  Example: production env:
+		/** Example: production env:
 			export TDAQ_ERS_ERROR="erstrace,throttle(30,100),lstderr,mts"
 			export TDAQ_ERS_FATAL="erstrace,lstderr,mts"
 			export TDAQ_ERS_WARNING="erstrace,throttle(30,100),lstderr,mts"
@@ -79,24 +80,41 @@ public:
 
 			export TDAQ_ERS_STREAM_LIBS="mtsStreams"
 		 */
+		// set defaults with 0=no override
 		setenv("TDAQ_ERS_FATAL", "erstrace,lstderr",0);
 		setenv("TDAQ_ERS_ERROR", "erstrace,throttle(30,100),lstderr",0);
 		setenv("TDAQ_ERS_WARNING","erstrace,throttle(30,100),lstderr",0);
-		setenv("TDAQ_ERS_INFO",   "lstdout",0);
+		setenv("TDAQ_ERS_INFO",   "erstrace,lstdout",0);
 		setenv("TDAQ_ERS_LOG",    "lstdout",0);
 		setenv("TDAQ_ERS_DEBUG",  "lstdout",0);
+		std::vector<std::string> envvars = {"TDAQ_ERS_FATAL","TDAQ_ERS_ERROR","TDAQ_ERS_WARNING","TDAQ_ERS_INFO"};
+		for (std::string& envvar : envvars) {
+			char *ecp = getenv(envvar.c_str());
+			if (strncmp(ecp,"erstrace",8) != 0) {
+				std::string newval = "erstrace," + std::string(ecp);
+				setenv(envvar.c_str(),newval.c_str(),1);
+			}
+		}
 
 		//setenv("TDAQ_APPLICATION_NAME","XYZZY",0);
 		std::ostringstream out;
 		out << (1ULL<<(TLVL_DEBUG+2))-1;
 		setenv("TRACE_LVLM",out.str().c_str(),0);
 
-		// Avoid DEBUG_1 [ers::PluginManager::PluginManager(...) at ...Library mtsStreams can not be loaded because libmtsStreams.so: cannot open shared object file: No such file or directory
+		// Avoid ERS_INTERNAL_DEBUG( 1, "Library " << MRSStreamLibraryName << " can not be loaded because " << ex.reason() )
+		//  DEBUG_1 [ers::PluginManager::PluginManager(...) at ...Library mtsStreams can not be loaded because libmtsStreams.so: cannot open shared object file: No such file or directory
 		// by only setting debug_level AFTER first ers::debug message
 		//setenv("TDAQ_ERS_DEBUG_LEVEL","63",0);
-		ers::LocalContext lc( "unknown", __FILE__, __LINE__, __func__, 0/*no_stack*/ );
+		ers::LocalContext lc( "logging package", __FILE__, __LINE__, __func__, 0/*no_stack*/ );
+#		if 1
 		int lvl=1;
-		ers::debug(ers::Message(lc,"hello") BOOST_PP_COMMA_IF( BOOST_PP_NOT( ERS_IS_EMPTY(ERS_EMPTY lvl) ) ) lvl);
+		ers::Message msg(lc,"Logger setup(...) ers::debug level 1 -- seems to come out level 0 (with ERS version v0_26_00d) ???");
+		msg.set_severity( ers::Severity( ers::Debug, lvl ) );
+		ers::debug(msg BOOST_PP_COMMA_IF( BOOST_PP_NOT( ERS_IS_EMPTY(ERS_EMPTY lvl) ) ) lvl); // still comes out as level 0 ???
+#		else
+		// ERS_DEBUG may be undef'd above
+		ERS_DEBUG( 1, "Logger setup(...)" ); // comes out as DEBUG_0
+#		endif
 		ers::Configuration::instance().debug_level(63);
 		char *cp;
 		if ((cp=getenv("TDAQ_ERS_DEBUG_LEVEL")) && *cp) {
@@ -110,15 +128,6 @@ public:
 	}
 };
 
-
-// The following Stream macros a) accept strings or Issue objects, and b)
-// accept optional arguments - NAME and/or "noDelayedFmt"
-// The TRACE_STREAMER args are: 1-lvl, 2,3-nam_or_fmt, 4-slow_enabled, 5-slow_force
-#undef  TLOG_INFO
-#define TLOG_INFO(...) TRACE_STREAMER(TLVL_INFO, \
-										  _tlog_ARG2(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
-										  _tlog_ARG3(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
-										  1, SL_FRC(TLVL_INFO) )
 
 //  The following uses gnu extension of "##" connecting "," with empty __VA_ARGS__
 //  which eats "," when __VA_ARGS__ is empty.

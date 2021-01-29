@@ -17,6 +17,8 @@ Run:
  */
 
 #include <logging/Logger.hpp>
+#include <string>
+#include <vector>
 
 ERS_DECLARE_ISSUE(ers,		// namespace
                   File2,		// issue class name

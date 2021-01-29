@@ -1,20 +1,24 @@
- // This file (exception_example.cxx) was created by Ron Rechenmacher <ron@fnal.gov> on
- // Oct 29, 2020. "TERMS AND CONDITIONS" governing this file are in the README
- // or COPYING file. If you do not have such a file, one can be obtained by
- // contacting Ron or Fermi Lab in Batavia IL, 60510, phone: 630-840-3000.
- // $RCSfile: .emacs.gnu,v $
- // rev="$Revision: 1.34 $$Date: 2019/04/22 15:23:54 $";
-/*
-    See https://atlas-tdaq-monitoring.web.cern.ch/OH/refman/ERSHowTo.html
+/**
+ * @file exception_example.cxx logger interface definition
+ *
+ * This is part of the DUNE DAQ Application Framework, copyright 2020.
+ * Licensing/copyright details are in the COPYING file that you should have
+ * received with this code.
  */
-#define USAGE "\
- Usage: %s <num>\n\
-where <num> is a number currently 0.\n\
-", basename(argv[0])
+
+//  See https://atlas-tdaq-monitoring.web.cern.ch/OH/refman/ERSHowTo.html
+
+const char *usage = R"foo(
+ Usage: %s <num>
+where <num> is a number: 0 - 6.
+)foo""\n";
+#define USAGE usage, basename(*argv)
 
 #include <libgen.h>				// basename
 #include <ers/SampleIssues.h>
 #include <logging/Logger.hpp>
+#include <string>
+#include <vector>
 
 class XX
 {
@@ -50,6 +54,14 @@ void foo( int except_int )
 		TLOG_DEBUG(1) << "throwing integer 4";
 		throw 4;
 		break;
+	case 5: {
+		TLOG_DEBUG(1) << "write to address 0 - cause segv";
+		int *ptr=nullptr;
+		*ptr = 0;
+	}
+		break;
+	default:
+		TLOG_DEBUG(1) << "not throwing anything";
 	}
 }
 
@@ -62,7 +74,7 @@ int main(  int	argc, char	*argv[] )
 
 	TLOG_DEBUG(1) << "trying foo";
 	try {
-        foo( strtoul(argv[1],NULL,0) );
+        foo( strtoul(argv[1],nullptr,0) );
     } catch ( ers::PermissionDenied & ex ) {
         ers::CantOpenFile issue( ERS_HERE, ex.get_file_name(), ex );
         ers::warning( issue );
@@ -75,10 +87,13 @@ int main(  int	argc, char	*argv[] )
     } catch ( std::exception & ex ) {
         ers::CantOpenFile issue( ERS_HERE, "unknown", ex );
         ers::warning( issue );
-    }/* catch (...) {
+    }
+#	if 0
+	catch (...) {
 		ers::fatal( ers::Message(ERS_HERE,"unhandle exceptions would not make it to the the TRACE memory buffer") );
 		// ErrorHandler::abort(...) does StandardStreamOutput::println(std::cerr, issue, 13); ::abort();
-		}*/
+	}
+#	endif
 	
 	return (0);
 }   // main
