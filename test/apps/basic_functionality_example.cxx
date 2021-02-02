@@ -17,7 +17,6 @@ Run:
  */
 
 #include <string>
-#include <vector>
 #define TRACE_NAME "basic_functionality_example" // NOLINT next version (after v3_15_09) will do this automatically
 #define ERS_PACKAGE "Logging"					 // Qualifier
 #define TDAQ_PACKAGE_NAME "Logging_"
@@ -66,10 +65,8 @@ void ex_thread( volatile const int *spinlock, int thread_idx )
 }
 
 
-int main(int argc, char *argv[])
+int main(/*int argc, char *argv[]*/)
 {
-	std::vector<std::string> arguments(argv + 1, argv + argc);
-
 	// FOR THIS EXAMPLE ONLY -- NOT NORMALLY NEEDED!! --v--v--v--v--v--v
 	// activate TRACE memory buffer for debugging
 	std::string tfile="/tmp/trace_buffer_"+std::string(getenv("USER"))+"_basic";
@@ -80,7 +77,8 @@ int main(int argc, char *argv[])
 	TRACE_CNTL("reset");
 	// --^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--
 
-	Logger().setup(arguments); // not strictly needed -- checks/establishes a default env.
+	setenv("TDAQ_APPLICATION_NAME","LOGGING_BASIC_FUN_APP",0);
+	Logging().setup(); // not strictly needed -- checks/establishes a default env.
 
 	TLOG_DEBUG( 0 )  << "a message which doesn't go to the central logger";
 	TLOG() << "another example of a message that doesn't go to the central logger";
@@ -108,7 +106,7 @@ int main(int argc, char *argv[])
 	TLOG("TEST1")  << appframework::CommandNotRegistered2(ERS_HERE,"MyCommand");
 	TLOG() << "LOG_LOG() stating LOG_DEBUG(n)'s follow -- they must be enabled via trace_cntl or TDAQ_ERS_DEBUG_LEVEL";
 
-	TLOG_DEBUG(6)<< ers::Message(ERS_HERE,"A LOG_DEBUG(6) using ers::Message - The Logger has just been setup. ERS bug - 1st DEBUG is always DEBUG_0");
+	TLOG_DEBUG(6)<< ers::Message(ERS_HERE,"A LOG_DEBUG(6) using ers::Message - The Logging has just been setup. ERS bug - 1st DEBUG is always DEBUG_0");
 	TLOG_DEBUG(6)<< ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_DEBUG_6",7,"seven");
 	TLOG_DEBUG(0) << "hello - debug level 0";
 	TLOG_DEBUG(5) << "hello - debug level 5";

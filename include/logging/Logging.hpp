@@ -5,8 +5,8 @@
  * Licensing/copyright details are in the COPYING file that you should have
  * received with this code.
  */
-#ifndef LOGGING_INCLUDE_LOGGING_LOGGER_HPP_
-#define LOGGING_INCLUDE_LOGGING_LOGGER_HPP_
+#ifndef LOGGING_INCLUDE_LOGGING_LOGGING_HPP_
+#define LOGGING_INCLUDE_LOGGING_LOGGING_HPP_
 
 #include <string>
 #include <vector>
@@ -58,14 +58,14 @@
  * @brief The Logger class defines the interface necessary to configure central
  * logging within a DAQ Application.
  */
-class Logger
+class Logging
 {
 public:
   /**
    * @brief Setup the Logger service
-   * @param args Command-line arguments used to setup the Logger
+   * Currently no args.
    */
-	static void setup(const std::vector<std::string> & args __attribute__((__unused__)) = {})
+	static void setup( void )
 	{
 		// need to get tricky to short circuit DEBUG message (at "level 1") about
 		//    libmtsStreams.so: cannot open shared object file: No such file or directory		
@@ -97,9 +97,9 @@ public:
 		}
 
 		//setenv("TDAQ_APPLICATION_NAME","XYZZY",0);
-		std::ostringstream out;
-		out << (1ULL<<(TLVL_DEBUG+2))-1;
-		setenv("TRACE_LVLM",out.str().c_str(),0);
+		// std::ostringstream out;
+		// out << (1ULL<<(TLVL_DEBUG+2))-1;
+		// setenv("TRACE_LVLM",(out.str()+",0").c_str(),0);
 
 		// Avoid ERS_INTERNAL_DEBUG( 1, "Library " << MRSStreamLibraryName << " can not be loaded because " << ex.reason() )
 		//  DEBUG_1 [ers::PluginManager::PluginManager(...) at ...Library mtsStreams can not be loaded because libmtsStreams.so: cannot open shared object file: No such file or directory
@@ -123,7 +123,7 @@ public:
 			//TRACE_CNTL("lvlmskSg",(1ULL<<lvl)-1); // this sets traceTID to id of "Logger"
 			uint64_t msk = ((1ULL<<lvl)-1) | (1ULL<<lvl);
 			std::string mskstr=std::to_string(msk);
-			setenv("TRACE_LVLS",mskstr.c_str(),0);
+			setenv("TRACE_LVLS",(mskstr+",0").c_str(),0);
 		}
 	}
 };
@@ -147,4 +147,4 @@ public:
 										  1, 0 )
 #endif
 
-#endif // LOGGING_INCLUDE_LOGGING_LOGGER_HPP_
+#endif // LOGGING_INCLUDE_LOGGING_LOGGING_HPP_

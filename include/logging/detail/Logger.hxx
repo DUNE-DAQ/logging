@@ -19,7 +19,7 @@
 __attribute__((no_sanitize("thread")))
 #  endif
 #endif
-static void verstrace_user(struct timeval *, int TID, uint8_t lvl, const char* insert
+static void verstrace_user(struct timeval */*tvp*/, int TID, uint8_t lvl, const char* insert
 	, const char* file, int line, const char* function, uint16_t nargs, const char *msg, va_list ap)
 {
 	size_t printed = 0;
@@ -64,9 +64,14 @@ static void verstrace_user(struct timeval *, int TID, uint8_t lvl, const char* i
 	//std::ostringstream ers_report_impl_out_buffer;
 	//ers_report_impl_out_buffer << outp;
 	if (lvl < TLVL_DEBUG) { // NOTE: at least currently, TLVL_LOG is numerically 1 less than TLVL_DEBUG
+		//auto d = std::chrono::seconds{tvp->tv_sec} + std::chrono::microseconds{tvp->tv_usec};
+		////std::chrono::system_clock::time_point tp{std::chrono::duration_cast<std::chrono::system_clock::duration>(d)};
+		//std::chrono::system_clock::time_point tp{d};
+		// PROTECTED - ers::Issue iss( ers::Issue( ers::Severity(ers::Log), tp, lc, outp, std::vector<std::string>(), std::map<std::string,std::string>(), nullptr ));
 		ers::log(   ers::Message(lc,outp) );
-	} else
+	} else {
 		ers::debug( ers::Message(lc,outp),lvl-TLVL_DEBUG );
+	}
 }
 
 SUPPRESS_NOT_USED_WARN
@@ -98,6 +103,10 @@ inline void operator<<(TraceStreamer& x, const ers::Issue &r)
     if (x.do_m) {
 		x.line_ = r.context().line_number();
 		x.msg_append(r.message().c_str());
+		// MAY NEED TO APPEND CHAINED ISSUE???
+		// const ers::Issue *issp = &r;
+		// while ((issp=issp->cause())) {
+		// }
 	}
 	if (x.do_s) {
 		if      (x.lvl_==TLVL_INFO) ers::info(  r );					\
@@ -111,6 +120,7 @@ inline void operator<<(TraceStreamer& x, const ers::Message &r)
 	if (x.do_m) {
 		x.line_ = r.context().line_number();
 		x.msg_append(r.message().c_str());
+		// MAY NEED TO APPEND CHAINED ISSUE???
 	}
 	if (x.do_s) {
 		if      (x.lvl_==TLVL_INFO) ers::info(  r );					\
@@ -126,7 +136,10 @@ inline void operator<<(TraceStreamer& x, const ers::Message &r)
         __ERS_DECLARE_ISSUE_BASE__(        namespace_name, class_name, base_class_name, message_, base_attributes, attributes )	\
         __ERS_DEFINE_ISSUE_BASE__( inline, namespace_name, class_name, base_class_name, message_, base_attributes, attributes ) \
                 static inline TraceStreamer& operator<<(TraceStreamer& x, const namespace_name::class_name &r) \
-                {if (x.do_m)   { x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );} \
+                {if (x.do_m)   {\
+					 x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );\
+					 // MAY NEED TO APPEND CHAINED ISSUE???\
+				 }													\
 				 if (x.do_s) { \
 					 if      (x.lvl_==TLVL_INFO) ers::info(  r );		\
 					 else if (x.lvl_==TLVL_LOG)  ers::log(   r );		\
@@ -141,7 +154,10 @@ inline void operator<<(TraceStreamer& x, const ers::Message &r)
         __ERS_DECLARE_ISSUE_BASE__(        namespace_name, class_name, ers::Issue, ERS_EMPTY message_, ERS_EMPTY, attributes ) \
         __ERS_DEFINE_ISSUE_BASE__( inline, namespace_name, class_name, ers::Issue, ERS_EMPTY message_, ERS_EMPTY, attributes ) \
                 static inline TraceStreamer& operator<<(TraceStreamer& x, const namespace_name::class_name &r) \
-                {if (x.do_m)   { x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );} \
+                {if (x.do_m)   {\
+					 x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );\
+					 // MAY NEED TO APPEND CHAINED ISSUE???\
+				 }													\
 				 if (x.do_s) {											\
 					 if      (x.lvl_==TLVL_INFO) ers::info(  r );		\
 					 else if (x.lvl_==TLVL_LOG)  ers::log(   r );		\

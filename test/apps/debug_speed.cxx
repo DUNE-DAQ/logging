@@ -18,7 +18,6 @@ Run:
 
 #include <logging/Logging.hpp>
 #include <string>
-#include <vector>
 
 ERS_DECLARE_ISSUE(ers,		// namespace
                   File2,		// issue class name
@@ -27,7 +26,7 @@ ERS_DECLARE_ISSUE(ers,		// namespace
                   )
 
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[] __attribute__((__unused__)))
 {
 	// activate TRACE memory buffer for debugging
 	std::string tfile="/tmp/trace_buffer_"+std::string(getenv("USER"))+"_debug_speed";
@@ -38,8 +37,7 @@ int main(int argc, char *argv[])
 	setenv("TRACE_LVLM",std::to_string(1ULL<<(TLVL_DEBUG+dbglvl)).c_str(),0); // make sure the specific debug lvl used is enabled
 
 	if (argc > 1) {
-		std::vector<std::string> arguments(argv + 1, argv + argc);
-		Logger().setup(arguments);	// either do this or export TDAQ_ERS_FATAL=erstrace,lstderr TDAQ_ERS_ERROR='erstrace,throttle(30,100),lstderr' TDAQ_ERS_WARNING='erstrace,throttle(30,100),lstderr'
+		Logging().setup();	// either do this or export TDAQ_ERS_FATAL=erstrace,lstderr TDAQ_ERS_ERROR='erstrace,throttle(30,100),lstderr' TDAQ_ERS_WARNING='erstrace,throttle(30,100),lstderr'
 	}
 
 	ers::File2 efile2(ERS_HERE, "constructed file" );

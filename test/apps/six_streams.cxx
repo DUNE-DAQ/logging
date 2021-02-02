@@ -11,9 +11,9 @@ const char *usage = R"foo(
 example: %s
 options:
  --help, -h       - print this help
- --no-setup, -n   - do not call Logger.setup() which integrates ERS and TRACE
+ --no-setup, -n   - do not call Logging.setup() which integrates ERS and TRACE
 )foo""\n";
-#define USAGE usage, basename(argv[0]), basename(argv[0])
+#define USAGE() printf( usage, basename(argv[0]), basename(argv[0]))
 
 #include <getopt.h>             // getopt_long
 #include <libgen.h>             // basename
@@ -21,7 +21,6 @@ options:
 #include <logging/Logging.hpp>
 #include <ers/SampleIssues.h>
 #include <string>
-#include <vector>
 
 int main(int argc, char *argv[])
 {
@@ -38,15 +37,15 @@ int main(int argc, char *argv[])
 		case '?': case 'h': opt_help=1;     break;
 		case 'n':           do_setup=0;     break;
 		default:
-			printf( "?? getopt returned character code 0%o ??\n", opt );
+			Logging().setup();
+			TLOG() << "?? getopt returned character code 0" << std::oct << opt;
 			opt_help=1;
 		}
 	}
-	if (opt_help) { printf(USAGE); exit(0); }
+	if (opt_help) { USAGE(); exit(0); }
 
 	if (do_setup) {
-		std::vector<std::string> arguments(argv + 1, argv + argc);
-		Logger().setup(arguments);	// either do this or export TDAQ_ERS_FATAL=erstrace,lstderr TDAQ_ERS_ERROR='erstrace,throttle(30,100),lstderr' TDAQ_ERS_WARNING='erstrace,throttle(30,100),lstderr'
+		Logging().setup();	// either do this or export TDAQ_ERS_FATAL=erstrace,lstderr TDAQ_ERS_ERROR='erstrace,throttle(30,100),lstderr' TDAQ_ERS_WARNING='erstrace,throttle(30,100),lstderr'
 	}
 
 	// usually, one of these (group of 3) do not come first

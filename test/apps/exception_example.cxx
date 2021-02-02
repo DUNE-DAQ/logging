@@ -18,7 +18,6 @@ where <num> is a number: 0 - 6.
 #include <ers/SampleIssues.h>
 #include <logging/Logging.hpp>
 #include <string>
-#include <vector>
 
 class XX
 {
@@ -69,8 +68,7 @@ int main(  int	argc, char	*argv[] )
 {
 	if (argc != 2) { printf(USAGE); exit(1); }
 
-	std::vector<std::string> arguments(argv + 1, argv + argc);
-	Logger().setup(arguments);
+	Logging().setup();
 
 	TLOG_DEBUG(1) << "trying foo";
 	try {
