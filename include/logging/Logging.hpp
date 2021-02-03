@@ -110,10 +110,10 @@ public:
 		int lvl=1;
 		ers::Message msg(lc,"Logger setup(...) ers::debug level 1 -- seems to come out level 0 (with ERS version v0_26_00d) ???");
 		msg.set_severity( ers::Severity( ers::Debug, lvl ) );
-		ers::debug(msg BOOST_PP_COMMA_IF( BOOST_PP_NOT( ERS_IS_EMPTY(ERS_EMPTY lvl) ) ) lvl); // still comes out as level 0 ???
+		ers::debug(msg,lvl); // still comes out as level 0 ???
 #		else
 		// ERS_DEBUG may be undef'd above
-		ERS_DEBUG( 1, "Logger setup(...)" ); // comes out as DEBUG_0
+		ers::debug( ers::Message(lc,"Logger setup(...)"), 1 ); // comes out as DEBUG_0
 #		endif
 		ers::Configuration::instance().debug_level(63);
 		char *cp;

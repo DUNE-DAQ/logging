@@ -43,7 +43,7 @@ void thread_func( volatile const int *spinlock, size_t thread_idx )
 								// chance to get here.
 	if (g_do_issue) {
 		for (auto uu=0; uu<g_loops; ++uu)
-			ers::info( TestIssue( ERS_HERE, thread_idx, lcllvl, uu ) );
+			ers::debug( TestIssue( ERS_HERE, thread_idx, lcllvl, uu ), lcllvl );
 	} else {
 		for (auto uu=0; uu<g_loops; ++uu)
 			TLOG_DEBUG(lcllvl) << "tidx " << thread_idx << " fast LOG_DEBUG(" << lcllvl << ") #" <<uu;
