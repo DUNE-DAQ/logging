@@ -138,7 +138,7 @@ inline void operator<<(TraceStreamer& x, const ers::Message &r)
                 static inline TraceStreamer& operator<<(TraceStreamer& x, const namespace_name::class_name &r) \
                 {if (x.do_m)   {\
 					 x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );\
-					 // MAY NEED TO APPEND CHAINED ISSUE???\
+					 /* MAY NEED TO APPEND CHAINED ISSUE???	*/			\
 				 }													\
 				 if (x.do_s) { \
 					 if      (x.lvl_==TLVL_INFO) ers::info(  r );		\
@@ -156,7 +156,7 @@ inline void operator<<(TraceStreamer& x, const ers::Message &r)
                 static inline TraceStreamer& operator<<(TraceStreamer& x, const namespace_name::class_name &r) \
                 {if (x.do_m)   {\
 					 x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );\
-					 // MAY NEED TO APPEND CHAINED ISSUE???\
+					 /* MAY NEED TO APPEND CHAINED ISSUE???	*/			\
 				 }													\
 				 if (x.do_s) {											\
 					 if      (x.lvl_==TLVL_INFO) ers::info(  r );		\

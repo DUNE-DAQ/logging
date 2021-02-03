@@ -32,9 +32,9 @@
 # define TLOG(...)  TRACE_STREAMER(TLVL_LOG, \
 								   _tlog_ARG2(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
 								   _tlog_ARG3(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
-								   1, SL_FRC(TLVL_LOG) )
+								   1, 1)
 #else
-# define TLOG(...)  TRACE_STREAMER(TLVL_LOG, TLOG2(__VA_ARGS__), 0)
+# define TLOG(...)  TRACE_STREAMER(TLVL_LOG, TLOG2(__VA_ARGS__), 1)
 #endif
 
 // TRACE's TLOG_DEBUG maybe OK, depending on the version of TRACE - check at the end of this file

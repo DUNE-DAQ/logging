@@ -15,7 +15,7 @@ options:
  --threads, -t    - threads in addition to main
  --do-issue, -i   - use issue
 )foo""\n";
-#define USAGE usage, basename(argv[0]), basename(argv[0])
+#define USAGE() printf( usage, basename(argv[0]), basename(argv[0]) )
 
 #include <getopt.h>             // getopt_long
 #include <vector>
@@ -41,12 +41,13 @@ void thread_func( volatile const int *spinlock, size_t thread_idx )
 	while(*spinlock);			// The main program thread will clear this
 								// once all thread are created and given a
 								// chance to get here.
-	if (g_do_issue)
+	if (g_do_issue) {
 		for (auto uu=0; uu<g_loops; ++uu)
 			ers::info( TestIssue( ERS_HERE, thread_idx, lcllvl, uu ) );
-	else
+	} else {
 		for (auto uu=0; uu<g_loops; ++uu)
 			TLOG_DEBUG(lcllvl) << "tidx " << thread_idx << " fast LOG_DEBUG(" << lcllvl << ") #" <<uu;
+	}
 
     pthread_exit(nullptr);
 }
@@ -78,7 +79,7 @@ int main(int argc, char *argv[])
 			opt_help=1;
 		}
 	}
-	if (opt_help) { printf(USAGE); exit(0); }
+	if (opt_help) { USAGE(); exit(0); }
 
 	std::vector<std::thread> threads(num_threads);
 	int spinlock=1;
@@ -87,12 +88,13 @@ int main(int argc, char *argv[])
 
 	usleep(20000);
 	spinlock = 0;
-	if (g_do_issue)
+	if (g_do_issue) {
 		for (int ii=0; ii<g_loops; ++ii)
 			ers::info( TestIssue( ERS_HERE, 0, g_dbglvl, ii ) );
-	else
+	} else {
 		for (int ii=0; ii<g_loops; ++ii)
 			TLOG_DEBUG(g_dbglvl) << "hello from DEBUG_" << g_dbglvl << " loop " << ii;
+	}
 
 	for (std::thread& tt : threads)
 		tt.join();
