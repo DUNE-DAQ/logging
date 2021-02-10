@@ -4,52 +4,34 @@ DUNE DAQ logging package
 This package is mainly based on ERS and secondarily based on TRACE.
 One link to ERS information can be found [here](https://atlas-tdaq-monitoring.web.cern.ch/OH/refman/ERSHowTo.html).
 One link to TRACE information can be found [here](https://cdcvs.fnal.gov/redmine/projects/trace/wiki).
+ERS github repo is [here](https://github.com/DUNE-DAQ/ers).
+
 ERS provides:
 - Assertion Macros
-- Logging Macros<code>*</code>
 - Macros for declaring Custom Issues
+- 6 logging streams and corresponding methods to work with (i.e. send to) them.
+- a mechanism to configure destination(s) for each of 6 loggings streams
 
-<code>*</code> TRACE provides high-speed dynamically activated debug logging and is integrated with the ERS logging; new macros are defined.
+ERS also provides Logging Macros, but these will not be used. One of the ERS destinations for 4 of the 6 loggings
+streams will be a "TRACE fast path destination."
 
-Users should be able to use the Assertion Macros from ERS and also declare Custom Issues. The issues can be used in logging and exception processing.
+TRACE provides:
+- several macros to implement stream-style logging to different logging levels.
+- slow and fast path logging
+- a mechanism to configure the slow path logging.
 
-For logging, six streamer macros are provided:
-1. LOG_FATAL()     << ers::Issue
-2. LOG_ERROR()     << ers::Issue
-3. LOG_WARNING()   << ers::Issue
-4. LOG_INFO()      << ers::Issue or basic string/args
-5. LOG_LOG()       << ers::Issue or basic string/args
+Only two of the TRACE logging macros will be used and TRACE will be configured to use ERS for the slow-path logging.
+
+Users will be able to use the Assertion Macros from ERS. They will also use macros to declare Custom Issues. The issues can be used in logging and exception processing.
+
+For logging, the six ERS "streams" (fatal, error, warning, info, log and debug) will be accessed using
+the ers methods or the TRACE macros as follow:
+
+1. ers::fatal( ers::Issue );
+2. ers::error( ers::Issue );
+3. ers::warning( ers::Issue );
+4. ers::info( ers::Issue );
+5. TLOG_LOG()       << ers::Issue or basic string/args
 6. LOG_DEBUG(lvl)  << ers::Issue or basic string/args
 
-~~~cpp
-LOG_ERROR() << ers::CantOpenFile2(ERS_HERE,"My_Error_FileName");
-~~~
-or
-~~~cpp
-LOG_DEBUG(0) << "general message";
-~~~
-or
-~~~cpp
-LOG_DEBUG(0) << ers::Message(ERS_HERE,"My_Warn_Message with ignored macro param");
-~~~
-
-## Building and basic_functionality using development version (2020-Oct-02) of quick-start.sh
-
-Ref. https://github.com/DUNE-DAQ/appfwk/wiki/Compiling-and-running
-
-```
-# in a new/empty development directory:
-curl -O https://raw.githubusercontent.com/DUNE-DAQ/daq-buildtools/develop/bin/quick-start.sh
-chmod +x quick-start.sh
-./quick-start.sh
-. ./setup_build_environment
-cd sourcecode
-git clone https://github.com/DUNE-DAQ/appfwk.git
-git clone https://github.com/DUNE-DAQ/logging.git
-cd ..
-./build_daq_software.sh --install
-```
-After the above, one can, referencing sourcecode/logging/test/basic_functionality_example.cxx, execute:
-```
-install/logging/bin/basic_functionality_example
-```
+Further, version specific, information can be found at https://github.com/DUNE-DAQ/logging/wiki
