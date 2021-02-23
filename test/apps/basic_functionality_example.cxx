@@ -68,7 +68,10 @@ int main(int argc, char *argv[])
 {
 	std::vector<std::string> arguments(argv + 1, argv + argc);
 
-	// activate TRACE memory buffer for debugging
+	// DO THE FOLLOWING JUST FOR THIS SPECIFIC DEMONSTRATION!
+	// Activate TRACE memory buffer for debugging.  NOTE: for
+	// TRACE memory buffer functionality to be "activated," at least
+	// one of 8 specific TRACE environment variables must be set.
 	std::string tfile="/tmp/trace_buffer_"+std::string(getenv("USER"))+"_basic";
 	system( ("rm -f "+tfile).c_str() );
 	setenv("TRACE_FILE",tfile.c_str(),0);
@@ -76,20 +79,29 @@ int main(int argc, char *argv[])
 	setenv("TRACE_LVLS","0xff",0);
 	TRACE_CNTL("reset");
 
-	Logger().setup(arguments);
-	ers::Message message(ERS_HERE,"Using TRACE_FILE="+tfile);
-	message.add_qualifier( "Logging_qual2" );
-	LOG_INFO()  << message;
-	LOG_LOG()   << ers::Message(ERS_HERE,"A LOG_LOG()    using ers::Message - The Logger has just been setup.");
-	LOG_LOG()   << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_LOG", 1, "hi");
+	Logger().setup(arguments); // This simply makes sure ERS and TRACE are integrated - properly
 
-	LOG_INFO() << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_INFO", 2, "there");
-	ers::info( ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_INFO",3,"then") );
-	LOG_INFO() << "The Logger has just been setup and this is an Info log message (LOG_INFO).";
+	// In addition to the Assertion macros (not demonstrated) and Exception features (demonstrated
+	// later), the following are demonstrated next:
+	// *  Creation of Issue objects
+	// *  Adding a qualifier to an Issue (multiple qualifiers may be added).
+	// *  Sending Issues to 4 of the 6 ERS streams.
+	// Note: the timestamp associated with the Issue is recorded when the Issue is created.
+	// Therefore, it makes sense to create the Issue as close as possible to when the issue sending
+	// method is called, e.g. within the call.
+	// Above, Issue declaration occurs using ERS_DECLARE_ISSUE* macro(s).  ers::Message is
+	// declared by ers and is a general purpose Issue used for logging a string message.
+	ers::Message message(ERS_HERE,"Logger setup and program directed using of TRACE_FILE="+tfile);
+	message.add_qualifier( "Logging_qual2" ); // Demonstrate adding a qualifier; this necessitates -
+	// - creating the issue before sending it. Perhaps this could be used in "filtering" - see ERS doc.
+	ers::info( message);
+	ers::warning( ers::CantOpenFile2(ERS_HERE,"My_Warning_FileName_via_LOG_LOG", 1, "hi") );
+	ers::error( ers::fatal( ers::CantOpenFile2(ERS_HERE,"My_Errr_FileName_via_LOG_LOG", 1, "hi"));
+	// Note: fatal would normally be associated with imminent program termination.
+	ers::fatal( ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_INFO", 2, "there"));
 
 	//----------------------------------------
-
-	LOG_FATAL() << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName - usually associated with throw or exit",4,"four");
+	TLOG() << ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName - usually associated with throw or exit",4,"four");
 	//ers::error( ers::Message( ERS_HERE, "this is ers::error( ers::Message( ERS_HERE, \"this is ...\" ) )" ) );
 	LOG_ERROR() << ers::CantOpenFile2(ERS_HERE,"My_Error_FileName",5,"five");
 #   if TRY_COMPILE & 0x1

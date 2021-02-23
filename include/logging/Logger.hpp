@@ -8,13 +8,12 @@
 #ifndef LOGGING_INCLUDE_LOGGING_LOGGER_HPP_
 #define LOGGING_INCLUDE_LOGGING_LOGGER_HPP_
 
-#if !defined(ERS_PACKAGE) && defined(TRACE_NAME)
-#	define ERS_PACKAGE TRACE_NAME
-#elif !defined(TRACE_NAME) && defined(ERS_PACKAGE)
-//#	define TRACE_NAME ERS_PACKAGE   // this may cause TRACE_NAME to be "unknown" (if ers/SampleIssues.h included before Logger.hpp)
-#else
-//  defaults will be used
-#endif
+#include <ers/ers.h>
+#include <logging/detail/Logger.hxx>
+
+
+
+
 
 #include <string>
 #include <vector>
@@ -36,7 +35,6 @@
 #  define TLVL_LOG   TLVL_INFO
 #endif
 
-#include <logging/detail/Logger.hxx> // needs TLVL_* definitions
 
 
 /**
