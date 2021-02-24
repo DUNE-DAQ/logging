@@ -105,6 +105,11 @@ public:
 		//  DEBUG_1 [ers::PluginManager::PluginManager(...) at ...Library mtsStreams can not be loaded because libmtsStreams.so: cannot open shared object file: No such file or directory
 		// by only setting debug_level AFTER first ers::debug message
 		//setenv("TDAQ_ERS_DEBUG_LEVEL","63",0);
+		ers::LocalContext lc( "logging package", __FILE__, __LINE__, __func__, 0/*no_stack*/ );
+		int lvl=1;
+		ers::Message msg(lc,"Logger setup(...) ers::debug level 1 -- seems to come out level 0 (with ERS version v0_26_00d) ???");
+		msg.set_severity( ers::Severity( ers::Debug, lvl ) );
+		ers::debug(msg,lvl); // still comes out as level 0 ???
 		ers::Configuration::instance().debug_level(63);
 		char *cp;
 		if ((cp=getenv("TDAQ_ERS_DEBUG_LEVEL")) && *cp) {
