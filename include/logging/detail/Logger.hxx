@@ -22,6 +22,48 @@ __attribute__((no_sanitize("thread")))
 static void verstrace_user(struct timeval */*tvp*/, int TID, uint8_t lvl, const char* insert
 	, const char* file, int line, const char* function, uint16_t nargs, const char *msg, va_list ap)
 {
+
+	class Message : public ers::Issue
+		{
+		public:
+
+			Message(const ers::Context &context,
+					const std::string &message = "")
+				: ers::Issue(context, message)
+			{
+				;
+			}
+
+			Message( ers::Severity severity,
+					 const ers::Context &context,
+					 const system_clock::time_point &time,
+					 const std::string &message,
+					 const std::vector<std::string> &qualifiers,
+					 const std::map<std::string, std::string> &parameters,
+					 const ers::Issue *cause = 0)
+				: ers::Issue(severity, time, context, message, qualifiers, parameters, cause)
+			{
+				;
+			}
+
+			~Message() noexcept { ; }
+
+			virtual ers::Issue *clone() const
+			{
+				return new Message(*this);
+			}
+
+			virtual void raise() const
+			{
+				throw Message(*this);
+			}
+
+			static const char *get_uid() { return BOOST_PP_STRINGIZE( Message ); }
+
+			const char *get_class_name() const { return get_uid(); }
+
+		};
+
 	size_t printed = 0;
 	int    retval;
 	const char *outp;
@@ -68,9 +110,9 @@ static void verstrace_user(struct timeval */*tvp*/, int TID, uint8_t lvl, const 
 		////std::chrono::system_clock::time_point tp{std::chrono::duration_cast<std::chrono::system_clock::duration>(d)};
 		//std::chrono::system_clock::time_point tp{d};
 		// PROTECTED - ers::Issue iss( ers::Issue( ers::Severity(ers::Log), tp, lc, outp, std::vector<std::string>(), std::map<std::string,std::string>(), nullptr ));
-		ers::log(   ers::Message(lc,outp) );
+		ers::log(   Message(lc,outp) );
 	} else {
-		ers::debug( ers::Message(lc,outp),lvl-TLVL_DEBUG );
+		ers::debug( Message(lc,outp),lvl-TLVL_DEBUG );
 	}
 }
 
