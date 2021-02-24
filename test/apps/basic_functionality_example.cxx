@@ -84,29 +84,27 @@ int main(/*int argc, char *argv[]*/)
 	TLOG() << "another example of a message that doesn't go to the central logger";
 	TLOG("MYNAME") << "yet another example -- messages are controllable via name+level";
 
-	ers::Message message(ERS_HERE,"Using TRACE_FILE="+tfile);
-	message.add_qualifier( "Logging_qual2" );
-	TLOG()  << message;
+	// JUST using some Issue for an example
+	ers::CantOpenFile2 example(ERS_HERE,&tfile[0],5,"example - no real error");
+	example.add_qualifier( "Logging_qual2" );
+	TLOG()  << example;
 
 	//----------------------------------------
 
 	ers::fatal( ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName - usually associated with throw or exit",4,"four") );
-	//ers::error( ers::Message( ERS_HERE, "this is ers::error( ers::Message( ERS_HERE, \"this is ...\" ) )" ) );
 	ers::error( ers::CantOpenFile2(ERS_HERE,"My_Error_FileName",5,"five") );
 #   if TRY_COMPILE & 0x1
 	// see what happens with: make clean install CXX_DEFINES=-DTRY_COMPILE=1
 	ers::error( "error with just a string" );
 #   endif
 	ers::warning( ers::CantOpenFile2(ERS_HERE,"My_Warn_FileName",6,"six") );
-	ers::warning( ers::Message(ERS_HERE,"My_Warn_Message with ignored macro param") );
-	ers::info(    ers::Message(ERS_HERE,"a specific TraceStreamer method with ers::Message isn't defined.") );
+	ers::info(    ers::CantOpenFile2(ERS_HERE,"My_Warn_FileName",7,"seven") );
 
 	//----------------------------------------
 
 	TLOG("TEST1")  << appframework::CommandNotRegistered2(ERS_HERE,"MyCommand");
 	TLOG() << "LOG_LOG() stating LOG_DEBUG(n)'s follow -- they must be enabled via trace_cntl or TDAQ_ERS_DEBUG_LEVEL";
 
-	TLOG_DEBUG(6)<< ers::Message(ERS_HERE,"A LOG_DEBUG(6) using ers::Message - The Logging has just been setup. ERS bug - 1st DEBUG is always DEBUG_0");
 	TLOG_DEBUG(6)<< ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_DEBUG_6",7,"seven");
 	TLOG_DEBUG(0) << "hello - debug level 0";
 	TLOG_DEBUG(5) << "hello - debug level 5";

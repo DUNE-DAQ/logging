@@ -88,7 +88,7 @@ int main(  int	argc, char	*argv[] )
     }
 #	if 0
 	catch (...) {
-		ers::fatal( ers::Message(ERS_HERE,"unhandle exceptions would not make it to the the TRACE memory buffer") );
+		TLOG() << "unhandle exceptions would not make it to the the TRACE memory buffer";
 		// ErrorHandler::abort(...) does StandardStreamOutput::println(std::cerr, issue, 13); ::abort();
 	}
 #	endif

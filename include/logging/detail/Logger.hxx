@@ -115,20 +115,6 @@ inline void operator<<(TraceStreamer& x, const ers::Issue &r)
 		x.do_s = 0;
 	}
 }
-inline void operator<<(TraceStreamer& x, const ers::Message &r)
-{
-	if (x.do_m) {
-		x.line_ = r.context().line_number();
-		x.msg_append(r.message().c_str());
-		// MAY NEED TO APPEND CHAINED ISSUE???
-	}
-	if (x.do_s) {
-		if      (x.lvl_==TLVL_INFO) ers::info(  r );					\
-		else if (x.lvl_==TLVL_LOG)  ers::log(   r );					\
-		else                        ers::debug( r, x.lvl_-TLVL_DEBUG );	\
-		x.do_s = 0;
-	}
-}
 
 // Ref. ers/internal/IssueDeclarationMacro.h
 # undef  ERS_DECLARE_ISSUE_BASE
