@@ -114,7 +114,7 @@ public:
 		char *cp;
 		if ((cp=getenv("TDAQ_ERS_DEBUG_LEVEL")) && *cp) {
 			int lvl=strtoul(cp,nullptr,0)+TLVL_DEBUG;
-			if (lvl>63) lvl=63;
+			if (lvl>63) lvl=63; else if (lvl<0) lvl=0;
 			//TRACE_CNTL("lvlmskSg",(1ULL<<lvl)-1); // this sets traceTID to id of "Logger"
 			uint64_t msk = ((1ULL<<lvl)-1) | (1ULL<<lvl);
 			std::string mskstr=std::to_string(msk);
