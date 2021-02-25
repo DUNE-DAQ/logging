@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 	if (opt_help) { USAGE(); exit(0); }
 
 	if (do_setup) {
-		Logging().setup();	// either do this or export TDAQ_ERS_FATAL=erstrace,lstderr TDAQ_ERS_ERROR='erstrace,throttle(30,100),lstderr' TDAQ_ERS_WARNING='erstrace,throttle(30,100),lstderr'
+		Logging().setup();	// either do this or export DUNEDAQ_ERS_FATAL=erstrace,lstderr DUNEDAQ_ERS_ERROR='erstrace,throttle(30,100),lstderr' DUNEDAQ_ERS_WARNING='erstrace,throttle(30,100),lstderr'
 	}
 
 	// usually, one of these (group of 3) do not come first

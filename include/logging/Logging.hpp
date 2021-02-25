@@ -70,24 +70,24 @@ public:
 		// need to get tricky to short circuit DEBUG message (at "level 1") about
 		//    libmtsStreams.so: cannot open shared object file: No such file or directory		
 		/** Example: production env:
-			export TDAQ_ERS_ERROR="erstrace,throttle(30,100),lstderr,mts"
-			export TDAQ_ERS_FATAL="erstrace,lstderr,mts"
-			export TDAQ_ERS_WARNING="erstrace,throttle(30,100),lstderr,mts"
-			export TDAQ_ERS_INFO="erstrace,throttle(30,100),lstdout,mts"
+			export DUNEDAQ_ERS_ERROR="erstrace,throttle(30,100),lstderr,mts"
+			export DUNEDAQ_ERS_FATAL="erstrace,lstderr,mts"
+			export DUNEDAQ_ERS_WARNING="erstrace,throttle(30,100),lstderr,mts"
+			export DUNEDAQ_ERS_INFO="erstrace,throttle(30,100),lstdout,mts"
 
-			export TDAQ_ERS_LOG="lstdout"
-			export TDAQ_ERS_DEBUG="lstdout"
+			export DUNEDAQ_ERS_LOG="lstdout"
+			export DUNEDAQ_ERS_DEBUG="lstdout"
 
-			export TDAQ_ERS_STREAM_LIBS="mtsStreams"
+			export DUNEDAQ_ERS_STREAM_LIBS="mtsStreams"
 		 */
 		// set defaults with 0=no override
-		setenv("TDAQ_ERS_FATAL", "erstrace,lstderr",0);
-		setenv("TDAQ_ERS_ERROR", "erstrace,throttle(30,100),lstderr",0);
-		setenv("TDAQ_ERS_WARNING","erstrace,throttle(30,100),lstderr",0);
-		setenv("TDAQ_ERS_INFO",   "erstrace,lstdout",0);
-		setenv("TDAQ_ERS_LOG",    "lstdout",0);
-		setenv("TDAQ_ERS_DEBUG",  "lstdout",0);
-		std::vector<std::string> envvars = {"TDAQ_ERS_FATAL","TDAQ_ERS_ERROR","TDAQ_ERS_WARNING","TDAQ_ERS_INFO"};
+		setenv("DUNEDAQ_ERS_FATAL", "erstrace,lstderr",0);
+		setenv("DUNEDAQ_ERS_ERROR", "erstrace,throttle(30,100),lstderr",0);
+		setenv("DUNEDAQ_ERS_WARNING","erstrace,throttle(30,100),lstderr",0);
+		setenv("DUNEDAQ_ERS_INFO",   "erstrace,lstdout",0);
+		setenv("DUNEDAQ_ERS_LOG",    "lstdout",0);
+		setenv("DUNEDAQ_ERS_DEBUG",  "lstdout",0);
+		std::vector<std::string> envvars = {"DUNEDAQ_ERS_FATAL","DUNEDAQ_ERS_ERROR","DUNEDAQ_ERS_WARNING","DUNEDAQ_ERS_INFO"};
 		for (std::string& envvar : envvars) {
 			char *ecp = getenv(envvar.c_str());
 			if (strncmp(ecp,"erstrace",8) != 0) {
@@ -96,7 +96,7 @@ public:
 			}
 		}
 
-		//setenv("TDAQ_APPLICATION_NAME","XYZZY",0);
+		//setenv("DUNEDAQ_APPLICATION_NAME","XYZZY",0);
 		// std::ostringstream out;
 		// out << (1ULL<<(TLVL_DEBUG+2))-1;
 		// setenv("TRACE_LVLM",(out.str()+",0").c_str(),0);
@@ -104,7 +104,7 @@ public:
 		// Avoid ERS_INTERNAL_DEBUG( 1, "Library " << MRSStreamLibraryName << " can not be loaded because " << ex.reason() )
 		//  DEBUG_1 [ers::PluginManager::PluginManager(...) at ...Library mtsStreams can not be loaded because libmtsStreams.so: cannot open shared object file: No such file or directory
 		// by only setting debug_level AFTER first ers::debug message
-		//setenv("TDAQ_ERS_DEBUG_LEVEL","63",0);
+		//setenv("DUNEDAQ_ERS_DEBUG_LEVEL","63",0);
 		ers::LocalContext lc( "logging package", __FILE__, __LINE__, __func__, 0/*no_stack*/ );
 #		if 1
 		int lvl=1;
@@ -117,7 +117,7 @@ public:
 #		endif
 		ers::Configuration::instance().debug_level(63);
 		char *cp;
-		if ((cp=getenv("TDAQ_ERS_DEBUG_LEVEL")) && *cp) {
+		if ((cp=getenv("DUNEDAQ_ERS_DEBUG_LEVEL")) && *cp) {
 			int lvl=strtoul(cp,nullptr,0)+TLVL_DEBUG;
 			if (lvl>63) lvl=63;
 			//TRACE_CNTL("lvlmskSg",(1ULL<<lvl)-1); // this sets traceTID to id of "Logger"
