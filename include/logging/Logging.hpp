@@ -11,49 +11,12 @@
 #include <string>
 #include <vector>
 #include "ers/ers.h"
-#include <ers/OutputStream.h>
+#include "ers/OutputStream.h"
 #include "TRACE/trace.h"
 
-#undef TRACE_LOG_FUNCTION
-#define TRACE_LOG_FUNCTION erstrace_user
+#include "logging/internal/macro.hpp"
 
-// don't worry about ERS_PACKAGE and/or TRACE_NAME -- leave them to the user or build system
-
-//-----------------------------------------------------------------------------
-
-
-/** 6 logging "streams" are defined: fatal, error, warning, info, log and debug.
-    The first 4 are accessed via the ers:: methods with a TRACE destination added.
-    THe last 2 are accessed via TRACE macros with an ers:: user method configured.
- */
-// Redefine TRACE's TLOG to only take 2 optional args: name and format control
-#undef TLOG
-#if TRACE_REVNUM <= 1443
-# define TLOG(...)  TRACE_STREAMER(TLVL_LOG, \
-								   _tlog_ARG2(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,need_at_least_one), \
-								   _tlog_ARG3(not_used, CHOOSE_(__VA_ARGS__)(__VA_ARGS__) 0,"",need_at_least_one), \
-								   1, 1)
-#else
-# define TLOG(...)  TRACE_STREAMER(TLVL_LOG, TLOG2(__VA_ARGS__), 1)
-#endif
-
-// TRACE's TLOG_DEBUG maybe OK, depending on the version of TRACE - check at the end of this file
-// TLOG_DBG ???
-
-#undef TLOG_ERROR
-#undef TLOG_WARNING
-#undef TLOG_INFO
-#undef TLOG_TRACE
-#undef TLOG_ARB
-
-#undef ERS_DEBUG
-#undef ERS_INFO
-#undef ERS_LOG
-
-
-#include <logging/detail/Logger.hxx>
-
-
+namespace dunedaq::logging {
 /**
  * @brief The Logger class defines the interface necessary to configure central
  * logging within a DAQ Application.
@@ -61,6 +24,7 @@
 class Logging
 {
 public:
+
   /**
    * @brief Setup the Logger service
    * Currently no args.
@@ -108,12 +72,12 @@ public:
 		ers::LocalContext lc( "logging package", __FILE__, __LINE__, __func__, 0/*no_stack*/ );
 #		if 1
 		int lvl=1;
-		ers::Message msg(lc,"Logger setup(...) ers::debug level 1 -- seems to come out level 0 (with ERS version v0_26_00d) ???");
+		ers::InternalMessage msg(lc,"Logger setup(...) ers::debug level 1 -- seems to come out level 0 (with ERS version v0_26_00d) ???");
 		msg.set_severity( ers::Severity( ers::Debug, lvl ) );
 		ers::debug(msg,lvl); // still comes out as level 0 ???
 #		else
 		// ERS_DEBUG may be undef'd above
-		ers::debug( ers::Message(lc,"Logger setup(...)"), 1 ); // comes out as DEBUG_0
+		ers::debug( ers::InternalMessage(lc,"Logger setup(...)"), 1 ); // comes out as DEBUG_0
 #		endif
 		ers::Configuration::instance().debug_level(63);
 		char *cp;
@@ -128,6 +92,9 @@ public:
 	}
 };
 
+} // namespace logging
+
+#include "logging/detail/Logger.hxx"
 
 //  The following uses gnu extension of "##" connecting "," with empty __VA_ARGS__
 //  which eats "," when __VA_ARGS__ is empty.

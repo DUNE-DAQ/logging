@@ -78,15 +78,15 @@ int main(/*int argc, char *argv[]*/)
 	// --^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--
 
 	setenv("DUNEDAQ_APPLICATION_NAME","LOGGING_BASIC_FUN_APP",0);
-	Logging().setup(); // not strictly needed -- checks/establishes a default env.
+	dunedaq::logging::Logging::setup(); // not strictly needed -- checks/establishes a default env.
 
 	TLOG_DEBUG( 0 )  << "a message which doesn't go to the central logger";
 	TLOG() << "another example of a message that doesn't go to the central logger";
 	TLOG("MYNAME") << "yet another example -- messages are controllable via name+level";
 
-	ers::Message message(ERS_HERE,"Using TRACE_FILE="+tfile);
-	message.add_qualifier( "Logging_qual2" );
-	TLOG()  << message;
+	// ers::Message message(ERS_HERE,"Using TRACE_FILE="+tfile);
+	// message.add_qualifier( "Logging_qual2" );
+	// TLOG()  << message;
 
 	//----------------------------------------
 
@@ -97,16 +97,16 @@ int main(/*int argc, char *argv[]*/)
 	// see what happens with: make clean install CXX_DEFINES=-DTRY_COMPILE=1
 	ers::error( "error with just a string" );
 #   endif
-	ers::warning( ers::CantOpenFile2(ERS_HERE,"My_Warn_FileName",6,"six") );
-	ers::warning( ers::Message(ERS_HERE,"My_Warn_Message with ignored macro param") );
-	ers::info(    ers::Message(ERS_HERE,"a specific TraceStreamer method with ers::Message isn't defined.") );
+	// ers::warning( ers::CantOpenFile2(ERS_HERE,"My_Warn_FileName",6,"six") );
+	// ers::warning( ers::Message(ERS_HERE,"My_Warn_Message with ignored macro param") );
+	// ers::info(    ers::Message(ERS_HERE,"a specific TraceStreamer method with ers::Message isn't defined.") );
 
 	//----------------------------------------
 
 	TLOG("TEST1")  << appframework::CommandNotRegistered2(ERS_HERE,"MyCommand");
 	TLOG() << "LOG_LOG() stating LOG_DEBUG(n)'s follow -- they must be enabled via trace_cntl or DUNEDAQ_ERS_DEBUG_LEVEL";
 
-	TLOG_DEBUG(6)<< ers::Message(ERS_HERE,"A LOG_DEBUG(6) using ers::Message - The Logging has just been setup. ERS bug - 1st DEBUG is always DEBUG_0");
+	// TLOG_DEBUG(6)<< ers::Message(ERS_HERE,"A LOG_DEBUG(6) using ers::Message - The Logging has just been setup. ERS bug - 1st DEBUG is always DEBUG_0");
 	TLOG_DEBUG(6)<< ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_DEBUG_6",7,"seven");
 	TLOG_DEBUG(0) << "hello - debug level 0";
 	TLOG_DEBUG(5) << "hello - debug level 5";

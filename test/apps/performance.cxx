@@ -55,7 +55,7 @@ void thread_func( volatile const int *spinlock, size_t thread_idx )
 
 int main(int argc, char *argv[])
 {
-	Logging().setup();	// either do this or export DUNEDAQ_ERS_FATAL=erstrace,lstderr DUNEDAQ_ERS_ERROR='erstrace,throttle(30,100),lstderr' DUNEDAQ_ERS_WARNING='erstrace,throttle(30,100),lstderr'
+	dunedaq::logging::Logging::setup();	// either do this or export DUNEDAQ_ERS_FATAL=erstrace,lstderr DUNEDAQ_ERS_ERROR='erstrace,throttle(30,100),lstderr' DUNEDAQ_ERS_WARNING='erstrace,throttle(30,100),lstderr'
 
 	int num_threads = 2;
 	int opt_help=0;

@@ -68,7 +68,7 @@ int main(  int	argc, char	*argv[] )
 {
 	if (argc != 2) { printf(USAGE); exit(1); }
 
-	Logging().setup();
+	dunedaq::logging::Logging::setup();
 
 	TLOG_DEBUG(1) << "trying foo";
 	try {
@@ -88,7 +88,7 @@ int main(  int	argc, char	*argv[] )
     }
 #	if 0
 	catch (...) {
-		ers::fatal( ers::Message(ERS_HERE,"unhandle exceptions would not make it to the the TRACE memory buffer") );
+		// ers::fatal( ers::Message(ERS_HERE,"unhandle exceptions would not make it to the the TRACE memory buffer") );
 		// ErrorHandler::abort(...) does StandardStreamOutput::println(std::cerr, issue, 13); ::abort();
 	}
 #	endif
