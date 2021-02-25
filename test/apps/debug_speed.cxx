@@ -9,11 +9,11 @@
 Run:
                                            debug_speed
   or                                       debug_speed 1  # this
-  or                TDAQ_ERS_DEBUG_LEVEL=2 debug_speed
-  or                TDAQ_ERS_DEBUG_LEVEL=2 debug_speed 1
+  or                DUNEDAQ_ERS_DEBUG_LEVEL=2 debug_speed
+  or                DUNEDAQ_ERS_DEBUG_LEVEL=2 debug_speed 1
   or  TRACE_LVLS=-1                        debug_speed
   or  TRACE_LVLS=-1                        debug_speed 1
-  or  TRACE_LVLS=-1 TDAQ_ERS_DEBUG_LEVEL=2 debug_speed    # or this
+  or  TRACE_LVLS=-1 DUNEDAQ_ERS_DEBUG_LEVEL=2 debug_speed    # or this
  */
 
 #include <logging/Logging.hpp>
@@ -37,7 +37,7 @@ int main(int argc, char *argv[] __attribute__((__unused__)))
 	setenv("TRACE_LVLM",std::to_string(1ULL<<(TLVL_DEBUG+dbglvl)).c_str(),0); // make sure the specific debug lvl used is enabled
 
 	if (argc > 1) {
-		Logging().setup();	// either do this or export TDAQ_ERS_FATAL=erstrace,lstderr TDAQ_ERS_ERROR='erstrace,throttle(30,100),lstderr' TDAQ_ERS_WARNING='erstrace,throttle(30,100),lstderr'
+		dunedaq::logging::Logging::setup();	// either do this or export DUNEDAQ_ERS_FATAL=erstrace,lstderr DUNEDAQ_ERS_ERROR='erstrace,throttle(30,100),lstderr' DUNEDAQ_ERS_WARNING='erstrace,throttle(30,100),lstderr'
 	}
 
 	ers::File2 efile2(ERS_HERE, "constructed file" );

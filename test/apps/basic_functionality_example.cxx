@@ -11,7 +11,7 @@
 Run:
     install/logging/bin/basic_functionality_example
   or
-    TDAQ_ERS_VERBOSITY_LEVEL=2 install/logging/bin/basic_functionality_example
+    DUNEDAQ_ERS_VERBOSITY_LEVEL=2 install/logging/bin/basic_functionality_example
   or
     TRACE_LVLS=-1 install/logging/bin/basic_functionality_example
  */
@@ -19,9 +19,9 @@ Run:
 #include <string>
 #define TRACE_NAME "basic_functionality_example" // NOLINT next version (after v3_15_09) will do this automatically
 #define ERS_PACKAGE "Logging"					 // Qualifier
-#define TDAQ_PACKAGE_NAME "Logging_"
+#define DUNEDAQ_PACKAGE_NAME "Logging_"
 #include <logging/Logging.hpp>
-#include <ers/Issue.h>
+#include <ers/Issue.hpp>
 
 /** \def ers::File2 This is the base class for all file related issues.
 */
@@ -77,16 +77,16 @@ int main(/*int argc, char *argv[]*/)
 	TRACE_CNTL("reset");
 	// --^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--
 
-	setenv("TDAQ_APPLICATION_NAME","LOGGING_BASIC_FUN_APP",0);
-	Logging().setup(); // not strictly needed -- checks/establishes a default env.
+	setenv("DUNEDAQ_APPLICATION_NAME","LOGGING_BASIC_FUN_APP",0);
+	dunedaq::logging::Logging::setup(); // not strictly needed -- checks/establishes a default env.
 
 	TLOG_DEBUG( 0 )  << "a message which doesn't go to the central logger";
 	TLOG() << "another example of a message that doesn't go to the central logger";
 	TLOG("MYNAME") << "yet another example -- messages are controllable via name+level";
 
-	ers::Message message(ERS_HERE,"Using TRACE_FILE="+tfile);
-	message.add_qualifier( "Logging_qual2" );
-	TLOG()  << message;
+	// ers::Message message(ERS_HERE,"Using TRACE_FILE="+tfile);
+	// message.add_qualifier( "Logging_qual2" );
+	// TLOG()  << message;
 
 	//----------------------------------------
 
@@ -97,16 +97,16 @@ int main(/*int argc, char *argv[]*/)
 	// see what happens with: make clean install CXX_DEFINES=-DTRY_COMPILE=1
 	ers::error( "error with just a string" );
 #   endif
-	ers::warning( ers::CantOpenFile2(ERS_HERE,"My_Warn_FileName",6,"six") );
-	ers::warning( ers::Message(ERS_HERE,"My_Warn_Message with ignored macro param") );
-	ers::info(    ers::Message(ERS_HERE,"a specific TraceStreamer method with ers::Message isn't defined.") );
+	// ers::warning( ers::CantOpenFile2(ERS_HERE,"My_Warn_FileName",6,"six") );
+	// ers::warning( ers::Message(ERS_HERE,"My_Warn_Message with ignored macro param") );
+	// ers::info(    ers::Message(ERS_HERE,"a specific TraceStreamer method with ers::Message isn't defined.") );
 
 	//----------------------------------------
 
 	TLOG("TEST1")  << appframework::CommandNotRegistered2(ERS_HERE,"MyCommand");
-	TLOG() << "LOG_LOG() stating LOG_DEBUG(n)'s follow -- they must be enabled via trace_cntl or TDAQ_ERS_DEBUG_LEVEL";
+	TLOG() << "LOG_LOG() stating LOG_DEBUG(n)'s follow -- they must be enabled via trace_cntl or DUNEDAQ_ERS_DEBUG_LEVEL";
 
-	TLOG_DEBUG(6)<< ers::Message(ERS_HERE,"A LOG_DEBUG(6) using ers::Message - The Logging has just been setup. ERS bug - 1st DEBUG is always DEBUG_0");
+	// TLOG_DEBUG(6)<< ers::Message(ERS_HERE,"A LOG_DEBUG(6) using ers::Message - The Logging has just been setup. ERS bug - 1st DEBUG is always DEBUG_0");
 	TLOG_DEBUG(6)<< ers::CantOpenFile2(ERS_HERE,"My_Fatal_FileName_via_LOG_DEBUG_6",7,"seven");
 	TLOG_DEBUG(0) << "hello - debug level 0";
 	TLOG_DEBUG(5) << "hello - debug level 5";
@@ -122,7 +122,7 @@ int main(/*int argc, char *argv[]*/)
 	TLOG() << "\ntshow follows:\n\n";
 	system( "TRACE_TIME_FMT=\"%Y-%b-%d %H:%M:%S,%%03d\" TRACE_SHOW=\"%H%x%N %T %e %l %L %m\" trace_cntl show | trace_delta -ct 1 -d 1" );
 
-	TLOG() << "\nOne could try the same with TDAQ_ERS_VERBOSITY_LEVEL=2 or 3\n";
+	TLOG() << "\nOne could try the same with DUNEDAQ_ERS_VERBOSITY_LEVEL=2 or 3\n";
 
 	TLOG() << "\nNow, fast multithread...\n";
 	const int kNumThreads=5;

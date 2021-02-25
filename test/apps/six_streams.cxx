@@ -19,7 +19,7 @@ options:
 #include <libgen.h>             // basename
 
 #include <logging/Logging.hpp>
-#include <ers/SampleIssues.h>
+#include <ers/SampleIssues.hpp>
 #include <string>
 
 int main(int argc, char *argv[])
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 		case '?': case 'h': opt_help=1;     break;
 		case 'n':           do_setup=0;     break;
 		default:
-			Logging().setup();
+			dunedaq::logging::Logging::setup();
 			TLOG() << "?? getopt returned character code 0" << std::oct << opt;
 			opt_help=1;
 		}
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 	if (opt_help) { USAGE(); exit(0); }
 
 	if (do_setup) {
-		Logging().setup();	// either do this or export TDAQ_ERS_FATAL=erstrace,lstderr TDAQ_ERS_ERROR='erstrace,throttle(30,100),lstderr' TDAQ_ERS_WARNING='erstrace,throttle(30,100),lstderr'
+		dunedaq::logging::Logging::setup();	// either do this or export DUNEDAQ_ERS_FATAL=erstrace,lstderr DUNEDAQ_ERS_ERROR='erstrace,throttle(30,100),lstderr' DUNEDAQ_ERS_WARNING='erstrace,throttle(30,100),lstderr'
 	}
 
 	// usually, one of these (group of 3) do not come first
