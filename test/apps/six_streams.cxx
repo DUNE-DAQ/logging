@@ -19,7 +19,7 @@ options:
 #include <libgen.h>             // basename
 
 #include <logging/Logging.hpp>
-#include <ers/SampleIssues.h>
+#include <ers/SampleIssues.hpp>
 #include <string>
 
 int main(int argc, char *argv[])

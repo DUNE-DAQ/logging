@@ -15,7 +15,7 @@ where <num> is a number: 0 - 6.
 #define USAGE usage, basename(*argv)
 
 #include <libgen.h>				// basename
-#include <ers/SampleIssues.h>
+#include <ers/SampleIssues.hpp>
 #include <logging/Logging.hpp>
 #include <string>
 

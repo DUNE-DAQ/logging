@@ -197,7 +197,7 @@ namespace {  // unnamed namespace (i.e. static (for each compliation unit only))
 
 // The following allows "erstrace" to be included in the ERS configuration via
 // DUNEDAQ_ERS_{FATAL,ERROR,WARNING} environment variables.
-#include <ers/OutputStream.h>
+#include <ers/OutputStream.hpp>
 namespace ers
 {
 struct erstraceStream : public OutputStream {

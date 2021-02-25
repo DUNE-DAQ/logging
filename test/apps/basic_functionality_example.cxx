@@ -21,7 +21,7 @@ Run:
 #define ERS_PACKAGE "Logging"					 // Qualifier
 #define DUNEDAQ_PACKAGE_NAME "Logging_"
 #include <logging/Logging.hpp>
-#include <ers/Issue.h>
+#include <ers/Issue.hpp>
 
 /** \def ers::File2 This is the base class for all file related issues.
 */
