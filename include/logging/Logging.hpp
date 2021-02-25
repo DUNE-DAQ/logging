@@ -10,8 +10,8 @@
 
 #include <string>
 #include <vector>
-#include "ers/ers.h"
-#include "ers/OutputStream.h"
+#include "ers/ers.hpp"
+#include "ers/OutputStream.hpp"
 #include "TRACE/trace.h"
 
 #include "logging/internal/macro.hpp"

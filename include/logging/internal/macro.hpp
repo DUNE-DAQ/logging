@@ -1,8 +1,8 @@
 #ifndef LOGGING_INCLUDE_LOGGING_INTERNAL_MACRO_HPP_
 #define LOGGING_INCLUDE_LOGGING_INTERNAL_MACRO_HPP_
 
-#include "ers/internal/IssueDeclarationMacro.h"
-#include "ers/internal/macro.h"
+#include "ers/internal/IssueDeclarationMacro.hpp"
+#include "ers/internal/macro.hpp"
 
 #undef TRACE_LOG_FUNCTION
 #define TRACE_LOG_FUNCTION erstrace_user
