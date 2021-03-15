@@ -17,9 +17,9 @@ Run:
  */
 
 #include <string>
-#define TRACE_NAME "basic_functionality_example" // NOLINT next version (after v3_15_09) will do this automatically
-#define ERS_PACKAGE "Logging"					 // Qualifier
-#define DUNEDAQ_PACKAGE_NAME "Logging_"
+#ifndef DUNEDAQ_PACKAGE_NAME                     // this could/may be (tbd) set by the build system
+#	define DUNEDAQ_PACKAGE_NAME "Logging_"          // becomes an ERS Qualifier
+#endif
 #include <logging/Logging.hpp>
 #include <ers/Issue.hpp>
 
