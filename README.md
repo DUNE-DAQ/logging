@@ -2,7 +2,7 @@
 DUNE DAQ logging package
 
 This package is mainly based on ERS and secondarily based on TRACE.
-The primary user documentation starting point for the DUNE fork of ERS is the README.md in the DUNE-DAQ ers github repo [here](https://github.com/DUNE-DAQ/ers). Additional (non-DUNE-DAQ specific) ERS information can be found [here](https://atlas-tdaq-monitoring.web.cern.ch/OH/refman/ERSHowTo.html).
+The primary user documentation starting point for the DUNE fork of ERS is the README.md in the DUNE-DAQ ers github repo [here](https://github.com/DUNE-DAQ/ers).
 One link to TRACE information can be found [here](https://cdcvs.fnal.gov/redmine/projects/trace/wiki).
 
 ERS provides:
