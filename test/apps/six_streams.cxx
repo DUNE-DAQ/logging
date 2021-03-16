@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
 	ers::warning(ers::FileDoesNotExist( ERS_HERE, "warning file") );
 	ers::info(   ers::FileDoesNotExist( ERS_HERE, "info file") );
 	TLOG()   << "Hello log stream";
+    TLOG_DEBUG(200)<<"debug 200-first debug (to ers::debug stream) appears to always get lvl 0.";
 	TLOG_DEBUG(2) << "debug 2 - first debug (to ers::debug stream) appears to always get lvl 0.";
 	TLOG_DEBUG(1) << "debug 1 - first debug (to ers::debug stream) appears to always get lvl 0.";
 	TLOG_DEBUG(0) << "debug 0 - stream arg=" << 3;
