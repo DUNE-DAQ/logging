@@ -2,7 +2,7 @@
 DUNE DAQ logging package
 
 This package is mainly based on ERS and secondarily based on TRACE.
-The primary user documentation starting point for the DUNE fork of ERS is the README.md in the DUNE-DAQ ers github repo [here](https://github.com/DUNE-DAQ/ers).
+The primary user documentation starting point for the DUNE fork of ERS is found on the official DUNE DAQ software website [here](https://dune-daq-sw.readthedocs.io/en/latest/packages/ers/).
 One link to TRACE information can be found [here](https://cdcvs.fnal.gov/redmine/projects/trace/wiki).
 
 ERS provides:
@@ -34,3 +34,5 @@ the ers methods or the TRACE macros as follow:
 6. LOG_DEBUG(lvl)  << ers::Issue or basic string/args
 
 Further, version specific, information can be found at https://github.com/DUNE-DAQ/logging/wiki
+
+Conventions and best practices for using ERS issues in the DUNE DAQ software can be found [here](ers-conventions.md).
