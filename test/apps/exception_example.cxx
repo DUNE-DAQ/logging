@@ -8,90 +8,96 @@
 
 //  See https://atlas-tdaq-monitoring.web.cern.ch/OH/refman/ERSHowTo.html
 
-const char *usage = R"foo(
+const char* usage = R"foo(
  Usage: %s <num>
 where <num> is a number: 0 - 6.
-)foo""\n";
+)foo"
+                    "\n";
+// NOLINTNEXTLINE(build/define_used)
 #define USAGE usage, basename(*argv)
 
-#include <libgen.h>				// basename
 #include <ers/SampleIssues.hpp>
+#include <libgen.h> // basename
 #include <logging/Logging.hpp>
 #include <string>
 
 class XX
 {
-	~XX() { TLOG_DEBUG(1) << "dtor object after raise/throw"; }
+  ~XX() { TLOG_DEBUG(1) << "dtor object after raise/throw"; }
 };
 
-void foo( int except_int )
+void
+foo(int except_int)
 {
-	XX xx();
-	switch( except_int ) {
-	case 0: {
-		TLOG_DEBUG(1) << "raising ers::PermissionDenied " << "somefilename";
-		ers::PermissionDenied permdenied(ERS_HERE, "somefilename", 0644 );
-		permdenied.raise();
-	}
-		break;
-	case 1: {
-		TLOG_DEBUG(1) << "raising ers::FileDoesNotExist " << "somenonfile";
-		ers::FileDoesNotExist doesnotexist(ERS_HERE, "somenonfilename" );
-		doesnotexist.raise();
-	}
-		break;
-	case 2: {
-		TLOG_DEBUG(1) << "raising ers::CantOpenFile " << "somelockedfile";
-		ers::CantOpenFile( ERS_HERE, "somelockedfile" ).raise();
-	}
-		break;
-	case 3:
-		TLOG_DEBUG(1) << "throwing std::exception";
-		throw std::exception();
-		break;
-	case 4:
-		TLOG_DEBUG(1) << "throwing integer 4";
-		throw 4;
-		break;
-	case 5: {
-		TLOG_DEBUG(1) << "write to address 0 - cause segv";
-		int *ptr=nullptr;
-		*ptr = 0;
-	}
-		break;
-	default:
-		TLOG_DEBUG(1) << "not throwing anything";
-	}
+  XX xx();
+  switch (except_int) {
+    case 0: {
+      TLOG_DEBUG(1) << "raising ers::PermissionDenied "
+                    << "somefilename";
+      ers::PermissionDenied permdenied(ERS_HERE, "somefilename", 0644);
+      permdenied.raise();
+    } break;
+    case 1: {
+      TLOG_DEBUG(1) << "raising ers::FileDoesNotExist "
+                    << "somenonfile";
+      ers::FileDoesNotExist doesnotexist(ERS_HERE, "somenonfilename");
+      doesnotexist.raise();
+    } break;
+    case 2: {
+      TLOG_DEBUG(1) << "raising ers::CantOpenFile "
+                    << "somelockedfile";
+      ers::CantOpenFile(ERS_HERE, "somelockedfile").raise();
+    } break;
+    case 3:
+      TLOG_DEBUG(1) << "throwing std::exception";
+      throw std::exception();
+      break;
+    case 4:
+      TLOG_DEBUG(1) << "throwing integer 4";
+      throw 4; // NOLINT
+      break;
+    case 5: {
+      TLOG_DEBUG(1) << "write to address 0 - cause segv";
+      int* ptr = nullptr;
+      *ptr = 0;
+    } break;
+    default:
+      TLOG_DEBUG(1) << "not throwing anything";
+  }
 }
 
-int main(  int	argc, char	*argv[] )
+int
+main(int argc, char* argv[])
 {
-	if (argc != 2) { printf(USAGE); exit(1); }
+  if (argc != 2) {
+    printf(USAGE); // NOLINT
+    exit(1);
+  }
 
-	dunedaq::logging::Logging::setup();
+  dunedaq::logging::Logging::setup();
 
-	TLOG_DEBUG(1) << "trying foo";
-	try {
-        foo( strtoul(argv[1],nullptr,0) );
-    } catch ( ers::PermissionDenied & ex ) {
-        ers::CantOpenFile issue( ERS_HERE, ex.get_file_name(), ex );
-        ers::warning( issue );
-    } catch ( ers::FileDoesNotExist & ex ) {
-        ers::CantOpenFile issue( ERS_HERE, ex.get_file_name(), ex );
-        ers::warning( issue );
-    } catch ( ers::Issue & ex ) {
-        TLOG_DEBUG( 0 ) << "Unknown issue caught: " << ex;
-        ers::error( ex );
-    } catch ( std::exception & ex ) {
-        ers::CantOpenFile issue( ERS_HERE, "unknown", ex );
-        ers::warning( issue );
-    }
-#	if 0
+  TLOG_DEBUG(1) << "trying foo";
+  try {
+    foo(strtoul(argv[1], nullptr, 0));
+  } catch (ers::PermissionDenied& ex) {
+    ers::CantOpenFile issue(ERS_HERE, ex.get_file_name(), ex);
+    ers::warning(issue);
+  } catch (ers::FileDoesNotExist& ex) {
+    ers::CantOpenFile issue(ERS_HERE, ex.get_file_name(), ex);
+    ers::warning(issue);
+  } catch (ers::Issue& ex) {
+    TLOG_DEBUG(0) << "Unknown issue caught: " << ex;
+    ers::error(ex);
+  } catch (std::exception& ex) {
+    ers::CantOpenFile issue(ERS_HERE, "unknown", ex);
+    ers::warning(issue);
+  }
+#if 0
 	catch (...) {
 		// ers::fatal( ers::Message(ERS_HERE,"unhandle exceptions would not make it to the the TRACE memory buffer") );
 		// ErrorHandler::abort(...) does StandardStreamOutput::println(std::cerr, issue, 13); ::abort();
 	}
-#	endif
-	
-	return (0);
-}   // main
+#endif
+
+  return (0);
+} // main
