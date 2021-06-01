@@ -12,12 +12,12 @@ set(LOGGING_DEPENDENCIES ers::ers)  # pthread
 
 daq_add_library( LINK_LIBRARIES ${LOGGING_DEPENDENCIES} )
 
-
 daq_add_application( exception_example exception_example.cxx TEST LINK_LIBRARIES ${LOGGING_DEPENDENCIES} )
 daq_add_application( basic_functionality_example basic_functionality_example.cxx TEST LINK_LIBRARIES logging )
 daq_add_application( performance performance.cxx TEST LINK_LIBRARIES logging )
 daq_add_application( six_streams six_streams.cxx TEST LINK_LIBRARIES logging )
 daq_add_application( debug_speed debug_speed.cxx TEST LINK_LIBRARIES logging )
 
+daq_add_python_bindings(*.cpp LINK_LIBRARIES ${PROJECT_NAME})
 
 daq_install()
