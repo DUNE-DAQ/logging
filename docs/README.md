@@ -9,7 +9,7 @@ ERS provides:
 * Assertion Macros
 * Macros for declaring Custom Issues
 * 6 logging streams and corresponding methods to work with (i.e. send to) them.
-* a mechanism to configure destination(s) for each of 6 loggings streams
+* a mechanism to configure destination(s) for each of 6 logging streams
 
 ERS also provides Logging Macros, but these have been removed in the DUNE DAQ fork.
 
@@ -19,7 +19,7 @@ TRACE provides:
 * a mechanism to configure the slow-path logging, i.e to use ERS as the slow-path logging.
 
 <details><summary>All messages that are sent to one of the ERS streams will also be sent to the TRACE fast path.</summary>
-This is achieved by specifying one of the ERS *destinations* for first 4 of the 6 loggings
+This is achieved by specifying one of the ERS *destinations* for first 4 of the 6 logging
 *streams* to be the "TRACE fast path destination."
 The Logging package setup function will ensure that the environment variables DUNEDAQ_ERS_{FATAL,ERROR,WARNING,INFO} (used to configure the stream destinations) will contain the "TRACE fast path destination." It is expected/required that all applications will call the Logging package setup function.</details>
 
