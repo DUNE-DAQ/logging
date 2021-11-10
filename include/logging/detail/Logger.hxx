@@ -22,6 +22,7 @@ __attribute__((no_sanitize("thread")))
 static void verstrace_user(struct timeval */*tvp*/, int TID, uint8_t lvl, const char* insert
 	, const char* file, int line, const char* function, uint16_t nargs, const char *msg, va_list ap)
 {
+
 	size_t printed = 0;
 	int    retval;
 	const char *outp;
@@ -68,9 +69,9 @@ static void verstrace_user(struct timeval */*tvp*/, int TID, uint8_t lvl, const 
 		////std::chrono::system_clock::time_point tp{std::chrono::duration_cast<std::chrono::system_clock::duration>(d)};
 		//std::chrono::system_clock::time_point tp{d};
 		// PROTECTED - ers::Issue iss( ers::Issue( ers::Severity(ers::Log), tp, lc, outp, std::vector<std::string>(), std::map<std::string,std::string>(), nullptr ));
-		ers::log(   ers::Message(lc,outp) );
+		ers::log(   ers::InternalMessage(lc,outp) );
 	} else {
-		ers::debug( ers::Message(lc,outp),lvl-TLVL_DEBUG );
+		ers::debug( ers::InternalMessage(lc,outp),lvl-TLVL_DEBUG );
 	}
 }
 
@@ -115,7 +116,8 @@ inline void operator<<(TraceStreamer& x, const ers::Issue &r)
 		x.do_s = 0;
 	}
 }
-inline void operator<<(TraceStreamer& x, const ers::Message &r)
+
+inline void operator<<(TraceStreamer& x, const ers::InternalMessage &r)
 {
 	if (x.do_m) {
 		x.line_ = r.context().line_number();
@@ -129,43 +131,6 @@ inline void operator<<(TraceStreamer& x, const ers::Message &r)
 		x.do_s = 0;
 	}
 }
-
-// Ref. ers/internal/IssueDeclarationMacro.h
-# undef  ERS_DECLARE_ISSUE_BASE
-# define ERS_DECLARE_ISSUE_BASE(           namespace_name, class_name, base_class_name, message_, base_attributes, attributes ) \
-        __ERS_DECLARE_ISSUE_BASE__(        namespace_name, class_name, base_class_name, message_, base_attributes, attributes )	\
-        __ERS_DEFINE_ISSUE_BASE__( inline, namespace_name, class_name, base_class_name, message_, base_attributes, attributes ) \
-                static inline TraceStreamer& operator<<(TraceStreamer& x, const namespace_name::class_name &r) \
-                {if (x.do_m)   {\
-					 x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );\
-					 /* MAY NEED TO APPEND CHAINED ISSUE???	*/			\
-				 }													\
-				 if (x.do_s) { \
-					 if      (x.lvl_==TLVL_INFO) ers::info(  r );		\
-					 else if (x.lvl_==TLVL_LOG)  ers::log(   r );		\
-					 else                        ers::debug( r, x.lvl_-TLVL_DEBUG ); \
-					 x.do_s = 0;										\
-				 }														\
-                 return x;												\
-                }
-
-# undef  ERS_DECLARE_ISSUE
-# define ERS_DECLARE_ISSUE(                namespace_name, class_name,                       message_,            attributes ) \
-        __ERS_DECLARE_ISSUE_BASE__(        namespace_name, class_name, ers::Issue, ERS_EMPTY message_, ERS_EMPTY, attributes ) \
-        __ERS_DEFINE_ISSUE_BASE__( inline, namespace_name, class_name, ers::Issue, ERS_EMPTY message_, ERS_EMPTY, attributes ) \
-                static inline TraceStreamer& operator<<(TraceStreamer& x, const namespace_name::class_name &r) \
-                {if (x.do_m)   {\
-					 x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );\
-					 /* MAY NEED TO APPEND CHAINED ISSUE???	*/			\
-				 }													\
-				 if (x.do_s) {											\
-					 if      (x.lvl_==TLVL_INFO) ers::info(  r );		\
-					 else if (x.lvl_==TLVL_LOG)  ers::log(   r );		\
-					 else                        ers::debug( r, x.lvl_-TLVL_DEBUG ); \
-					 x.do_s = 0;										\
-				 }														\
-                 return x; \
-                }
 
 
 namespace {  // unnamed namespace (i.e. static (for each compliation unit only))
@@ -231,8 +196,8 @@ namespace {  // unnamed namespace (i.e. static (for each compliation unit only))
 
 
 // The following allows "erstrace" to be included in the ERS configuration via
-// TDAQ_ERS_{FATAL,ERROR,WARNING} environment variables.
-#include <ers/OutputStream.h>
+// DUNEDAQ_ERS_{FATAL,ERROR,WARNING} environment variables.
+#include <ers/OutputStream.hpp>
 namespace ers
 {
 struct erstraceStream : public OutputStream {

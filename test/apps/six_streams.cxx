@@ -19,7 +19,7 @@ options:
 #include <libgen.h>             // basename
 
 #include <logging/Logging.hpp>
-#include <ers/SampleIssues.h>
+#include <ers/SampleIssues.hpp>
 #include <string>
 
 int main(int argc, char *argv[])
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 		case '?': case 'h': opt_help=1;     break;
 		case 'n':           do_setup=0;     break;
 		default:
-			Logging().setup();
+			dunedaq::logging::Logging::setup();
 			TLOG() << "?? getopt returned character code 0" << std::oct << opt;
 			opt_help=1;
 		}
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 	if (opt_help) { USAGE(); exit(0); }
 
 	if (do_setup) {
-		Logging().setup();	// either do this or export TDAQ_ERS_FATAL=erstrace,lstderr TDAQ_ERS_ERROR='erstrace,throttle(30,100),lstderr' TDAQ_ERS_WARNING='erstrace,throttle(30,100),lstderr'
+		dunedaq::logging::Logging::setup();	// either do this or export DUNEDAQ_ERS_FATAL=erstrace,lstderr DUNEDAQ_ERS_ERROR='erstrace,throttle(30,100),lstderr' DUNEDAQ_ERS_WARNING='erstrace,throttle(30,100),lstderr'
 	}
 
 	// usually, one of these (group of 3) do not come first
@@ -57,6 +57,8 @@ int main(int argc, char *argv[])
 	TLOG_DEBUG(2) << "debug 2 - first debug (to ers::debug stream) appears to always get lvl 0.";
 	TLOG_DEBUG(1) << "debug 1 - first debug (to ers::debug stream) appears to always get lvl 0.";
 	TLOG_DEBUG(0) << "debug 0 - stream arg=" << 3;
+    TLOG_DEBUG(200)<<"debug 200-debug levels above 55 will be changed to 55; first debug appear to always get lvl 0.";
+    TLOG_DEBUG(-20)<<"debug -20-debug levels below  0 will be changed to  0";
 
 	return (0);
 }   // main
