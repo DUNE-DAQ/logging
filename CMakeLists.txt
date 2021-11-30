@@ -5,7 +5,7 @@ find_package(daq-cmake REQUIRED)
 
 daq_setup_environment()
 
-find_package(TRACE 3.16.02 REQUIRED)
+find_package(TRACE REQUIRED)
 find_package(ers REQUIRED)
 
 set(LOGGING_DEPENDENCIES ers::ers)  # pthread
