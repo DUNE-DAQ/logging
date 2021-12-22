@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.12)
-project(logging VERSION 1.0.3)
+project(logging VERSION 1.0.5)
 
 find_package(daq-cmake REQUIRED)
 
 daq_setup_environment()
 
-find_package(TRACE 3.16.02 REQUIRED)
+find_package(TRACE REQUIRED)
 find_package(ers REQUIRED)
 
 set(LOGGING_DEPENDENCIES ers::ers)  # pthread
@@ -18,6 +18,7 @@ daq_add_application( basic_functionality_example basic_functionality_example.cxx
 daq_add_application( performance performance.cxx TEST LINK_LIBRARIES logging )
 daq_add_application( six_streams six_streams.cxx TEST LINK_LIBRARIES logging )
 daq_add_application( debug_speed debug_speed.cxx TEST LINK_LIBRARIES logging )
+daq_add_application( multithreaded_warning_log multithreaded_warning_log.cxx TEST LINK_LIBRARIES logging )
 
 
 daq_install()
