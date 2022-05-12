@@ -8,7 +8,18 @@ daq_setup_environment()
 find_package(TRACE REQUIRED)
 find_package(ers REQUIRED)
 
-set(LOGGING_DEPENDENCIES ers::ers)  # pthread
+#message("TRACE_VERSION=${TRACE_VERSION} TRACE_VERSION_MAJOR=${TRACE_VERSION_MAJOR} TRACE_VERSION_MINOR=${TRACE_VERSION_MINOR} TRACE_VERSION_PATCH=${TRACE_VERSION_PATCH} TRACE_INCLUDE_DIRS=${TRACE_INCLUDE_DIRS} *** TRACE_INCLUDE_DIR=${TRACE_INCLUDE_DIR}")
+
+if(TARGET TRACE::TRACE) # check for more modern cmake methodology in TRACE
+  #message("TRACE::TRACE target defined")
+  set(LOGGING_DEPENDENCIES ers::ers TRACE::TRACE)  # pthread
+else()
+  #message("TRACE::TRACE target NOT defined - include_directories")
+  set(LOGGING_DEPENDENCIES ers::ers)  # pthread
+  if(${TRACE_VERSION} VERSION_EQUAL "3.17.03" AND TRACE_INCLUDE_DIR)
+    include_directories("${TRACE_INCLUDE_DIR}")  # adds to the list; singular TRACE_INCLUDE_DIR should not usually be used in CMakeLists.txt files
+  endif()
+endif()
 
 daq_add_library( LINK_LIBRARIES ${LOGGING_DEPENDENCIES} )
 
