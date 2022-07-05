@@ -47,6 +47,30 @@ The TLOG_DEBUG(lvl) is to be used for messages which will be selectively enabled
 
 The TLOG_DEBUG(lvl) macro accepts an optional "name" parameter which defaults to the basename of the compilation file minus the extension. The level and name combination is ultimately used to enable and disable specific TLOG_DEBUG statements.
 
+## Examples
+
+```CPP
+
+#include "logging/Logging.hpp"
+
+namespace dunedaq {
+ERS_DECLARE_ISSUE(test, TestERSIssue, "TestERSIssue: " << text, ((std::string)text))
+} // namespace dunedaq
+
+using namespace dunedaq::test;
+
+int main() {
+    // ERS log ouput:
+    ers::fatal ( TestERSIssue("Fatal message") );
+    ers::error ( TestERSIssue("Error message") );
+    ers::warning ( TestERSIssue("Warning messag") );
+    ers::info ( TestERSIssue("Info message") );
+    TLOG() << "Info log message, can also send " << TestERSIssue("here");
+    TLOG_DEBUG(10) << "Verbose Debug message to TRACE buffer";
+}
+
+```
+
 # ERS/Slow-path configuration
 
 By default, all ERS severities are configured to have at least standard out or standard error as a destination.
