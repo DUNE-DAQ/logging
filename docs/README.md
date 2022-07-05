@@ -65,7 +65,10 @@ int main() {
     ers::error ( TestERSIssue("Error message") );
     ers::warning ( TestERSIssue("Warning messag") );
     ers::info ( TestERSIssue("Info message") );
+    
+    // TRACE log (stdout only)
     TLOG() << "Info log message, can also send " << TestERSIssue("here");
+    // TRACE memory (no stdout unless enabled via tlvls
     TLOG_DEBUG(10) << "Verbose Debug message to TRACE buffer";
 }
 
