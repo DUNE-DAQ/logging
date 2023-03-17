@@ -21,12 +21,13 @@ where <num> is a number: 0 - 6.
 
 class XX
 {
+    public:
 	~XX() { TLOG_DEBUG(1) << "dtor object after raise/throw"; }
 };
 
 void foo( int except_int )
 {
-	XX xx();
+	XX xx;
 	switch( except_int ) {
 	case 0: {
 		TLOG_DEBUG(1) << "raising ers::PermissionDenied " << "somefilename";
