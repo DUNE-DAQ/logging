@@ -1,7 +1,7 @@
 #ifndef DUNEDAQ_PACKAGE_NAME                     // this could/may be (tbd) set by the build system
 #       define DUNEDAQ_PACKAGE_NAME "Logging_"          // becomes an ERS Qualifier
 #endif
-#include <logging/Logging.hpp>
+#include <logging/Logging.hpp>  // NOTE: if ISSUES ARE DECLARED BEFORE include logging/Logging.hpp, TLOG_DEBUG<<issue wont work.
 #include <ers/Issue.hpp>
 #include <vector>
 
@@ -39,12 +39,24 @@ int main(/*int argc, char *argv[]*/)
   setenv("DUNEDAQ_APPLICATION_NAME","LOGGING_PROGRESS_APP",0);
   dunedaq::logging::Logging::setup(); // not strictly needed -- checks/establishes a default env.
 
-  std::atomic<uint64_t> m_generated_tot{ 3 };
+  std::atomic<uint64_t> m_generated_tot{ 7 };
   std::vector<int> theList{1,2,3};
   std::ostringstream oss_prog;
+  TLOG() << "start";
   oss_prog << "Generated list #" << m_generated_tot.load() << " with contents " << theList
 	   << " and size " << theList.size() << ". ";
-  TLOG_DEBUG() << (ProgressUpdate(ERS_HERE, "someName", oss_prog.str()));
 
+  std::cout << typeid(ProgressUpdate).name() << "\n\n";
+  
+  TLOG()       << static_cast<logging::ProgressUpdate>(ProgressUpdate(ERS_HERE, "someName1", oss_prog.str()));
+
+#if 1
+  TLOG_DEBUG() << ProgressUpdate(ERS_HERE, "someName2", oss_prog.str());
+  std::cout    << ProgressUpdate(ERS_HERE, "someName3", oss_prog.str()) << '\n';
+
+  TLOG_DEBUG() << ProgressUpdate(ERS_HERE, "someName4", oss_prog.str());
+  TLOG_DEBUG() << ProgressUpdate(ERS_HERE, "someName5", oss_prog.str());
+#endif
+  
   return 0;
 }

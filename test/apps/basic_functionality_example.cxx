@@ -120,7 +120,7 @@ int main(/*int argc, char *argv[]*/)
 	TLOG_DEBUG(64) << "debug lvl 64";
 
 	TLOG() << "\ntshow follows:\n\n";
-	system( "TRACE_TIME_FMT=\"%Y-%b-%d %H:%M:%S,%%03d\" TRACE_SHOW=\"%H%x%N %T %e %l %L %m\" trace_cntl show | trace_delta -ct 1 -d 1" );
+	system( "TRACE_TIME_FMT='%Y-%b-%d %H:%M:%S,%%03d' TRACE_SHOW='%H%x%N %T %e %l %8L %m' trace_cntl show | trace_delta -ct 1 -d 1" );
 
 	TLOG() << "\nOne could try the same with DUNEDAQ_ERS_VERBOSITY_LEVEL=2 or 3\n";
 
@@ -138,7 +138,7 @@ int main(/*int argc, char *argv[]*/)
 		threads[uu].join();
 
 	TLOG() << "\ntshow follows:\n\n";
-	system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %e %L %R %m\" trace_cntl show -c 25 | trace_delta -ct 1 -d 1" );
+	system( "TRACE_SHOW='%H%x%N %T %P %i %C %e %3L %R %m' trace_cntl show -c 25 | trace_delta -ct 1 -d 1" );
 
 	throw( appframework::MyExit(ERS_HERE) );
 	return (0);
