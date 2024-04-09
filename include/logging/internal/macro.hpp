@@ -45,7 +45,8 @@
 # define ERS_DECLARE_ISSUE_BASE(           namespace_name, class_name, base_class_name, message_, base_attributes, attributes ) \
         __ERS_DECLARE_ISSUE_BASE__(        namespace_name, class_name, base_class_name, message_, base_attributes, attributes ) \
         __ERS_DEFINE_ISSUE_BASE__( inline, namespace_name, class_name, base_class_name, message_, base_attributes, attributes ) \
-                static inline TraceStreamer& operator<<(TraceStreamer& x, const namespace_name::class_name &r) \
+	namespace namespace_name {					\
+	  static inline TraceStreamer& operator<<(TraceStreamer& x, const class_name &r) \
                 {if (x.do_m)   {\
                      x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );\
                      /* MAY NEED TO APPEND CHAINED ISSUE??? */          \
@@ -57,13 +58,15 @@
                      x.do_s = 0;                                        \
                  }                                                      \
                  return x;                                              \
-                }
+                } \
+	}
 
 # undef  ERS_DECLARE_ISSUE
 # define ERS_DECLARE_ISSUE(                namespace_name, class_name,                       message_,            attributes ) \
         __ERS_DECLARE_ISSUE_BASE__(        namespace_name, class_name, ers::Issue, ERS_EMPTY message_, ERS_EMPTY, attributes ) \
         __ERS_DEFINE_ISSUE_BASE__( inline, namespace_name, class_name, ers::Issue, ERS_EMPTY message_, ERS_EMPTY, attributes ) \
-                static inline TraceStreamer& operator<<(TraceStreamer& x, const namespace_name::class_name &r) \
+	namespace namespace_name {					\
+	  static inline TraceStreamer& operator<<(TraceStreamer& x, const class_name &r) \
                 {if (x.do_m)   {\
                      x.line_=r.context().line_number(); x.msg_append( r.message().c_str() );\
                      /* MAY NEED TO APPEND CHAINED ISSUE??? */          \
@@ -75,6 +78,7 @@
                      x.do_s = 0;                                        \
                  }                                                      \
                  return x; \
-                }
+                } \
+	}
 
 #endif // LOGGING_INCLUDE_LOGGING_INTERNAL_MACRO_HPP_
