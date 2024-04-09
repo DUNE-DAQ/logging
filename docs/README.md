@@ -41,7 +41,7 @@ Conventions and best practices for ERS issues in the DUNE DAQ software can be fo
 
 The above referenced conventions and best practices does not cover the use of the TRACE macros.
 
-The TLOG() macro should used in cases similar to ers::info with the following 2 distinctions: 1) unstructed (non-ers::Issue) messages can be used and 2) logging will remain local, i.e. stdout only and not to a central/network logging facility.
+The TLOG() macro should be used in cases similar to ers::info with the following 2 distinctions: 1) unstructed (non-ers::Issue) messages can be used and 2) logging will remain local, i.e. stdout only and not to a central/network logging facility.
 
 The TLOG_DEBUG(lvl) is to be used for messages which will be selectively enabled or disabled for debugging purposes. The lvl can be an arbitrary integer between 0 and 55.
 

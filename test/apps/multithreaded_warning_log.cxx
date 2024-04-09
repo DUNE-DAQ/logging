@@ -21,7 +21,7 @@ options:
 #include <stdlib.h>			// rand_r, RAND_MAX
 #include <vector>
 #include <thread>
-#define JUST_ERS 1
+#define JUST_ERS 0
 #if JUST_ERS
 # include <ers/ers.hpp>
 #else
