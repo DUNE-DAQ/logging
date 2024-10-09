@@ -29,7 +29,8 @@ public:
    * @brief Setup the Logger service
    * Currently no args.
    */
-	static void setup( void )
+  static void setup( const std::string & session,
+		     const std::string & application )
 	{
 		// need to get tricky to short circuit DEBUG message (at "level 1") about
 		//    libmtsStreams.so: cannot open shared object file: No such file or directory		
@@ -44,6 +45,11 @@ public:
 
 			export DUNEDAQ_ERS_STREAM_LIBS="mtsStreams"
 		 */
+
+	  // creates variables for application awearness
+	  setenv("DUNEDAQ_SESSION", session.c_str(), 1);
+	  setenv("DUNEDAQ_APPLICATION_NAME", application.c_str(), 1);
+	  
 		// set defaults with 0=no override
 		setenv("DUNEDAQ_ERS_FATAL", "erstrace,lstderr",0);
 		setenv("DUNEDAQ_ERS_ERROR", "erstrace,throttle(30,100),lstderr",0);

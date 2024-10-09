@@ -36,8 +36,7 @@ operator<<(std::ostream& t, std::vector<int> ints)
 
 int main(/*int argc, char *argv[]*/)
 {
-  setenv("DUNEDAQ_APPLICATION_NAME","LOGGING_PROGRESS_APP",0);
-  dunedaq::logging::Logging::setup(); // not strictly needed -- checks/establishes a default env.
+  dunedaq::logging::Logging::setup("test", "log_progress_update"); 
 
   std::atomic<uint64_t> m_generated_tot{ 7 };
   std::vector<int> theList{1,2,3};
