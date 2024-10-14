@@ -69,7 +69,7 @@ int main(  int	argc, char	*argv[] )
 {
 	if (argc != 2) { printf(USAGE); exit(1); }
 
-	dunedaq::logging::Logging::setup();
+	dunedaq::logging::Logging::setup("test", "exception_example");
 
 	TLOG_DEBUG(1) << "trying foo";
 	try {

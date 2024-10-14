@@ -78,7 +78,7 @@ int main(/*int argc, char *argv[]*/)
 	// --^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--^--
 
 	setenv("DUNEDAQ_APPLICATION_NAME","LOGGING_BASIC_FUN_APP",0);
-	dunedaq::logging::Logging::setup(); // not strictly needed -- checks/establishes a default env.
+	dunedaq::logging::Logging::setup("test", "basic_functionality_example");
 
 	TLOG_DEBUG( 0 )  << "a message which doesn't go to the central logger";
 	TLOG() << "another example of a message that doesn't go to the central logger";
