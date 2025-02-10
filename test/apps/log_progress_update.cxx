@@ -47,7 +47,8 @@ int main(/*int argc, char *argv[]*/)
 
   std::cout << typeid(ProgressUpdate).name() << "\n\n";
   
-  TLOG()       << static_cast<logging::ProgressUpdate>(ProgressUpdate(ERS_HERE, "someName1", oss_prog.str()));
+  TLOG() << static_cast<logging::ProgressUpdate>(ProgressUpdate(ERS_HERE, "someName1", oss_prog.str()));
+  TLOG() << ProgressUpdate(ERS_HERE, "someName1", oss_prog.str());
 
 #if 1
   TLOG_DEBUG() << ProgressUpdate(ERS_HERE, "someName2", oss_prog.str());
