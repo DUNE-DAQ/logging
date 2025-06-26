@@ -11,7 +11,7 @@ from daq_logging.handlers import (
     add_stderr_handler,
     add_stdout_handler,
 )
-
+from daq_logging.levels import log_levels
 
 def validate_setup_configuration(
     logger_name: str, rich_handler: bool, stdout_handler: bool, stderr_handler: bool
@@ -29,6 +29,11 @@ def validate_setup_configuration(
 def setup_root_logger(name: str, level: int) -> logging.Logger:
     """Set up the base logger from which all other loggers inherit."""
     root_logger = logging.getLogger(name)
+
+    if isinstance(level, str):
+        if level not in log_levels:
+            raise ValueError(f"Invalid logging level: {level}")
+        level = log_levels[level]
     root_logger.setLevel(level)
 
     sh_command_level = level if level > logging.INFO else (level + 10)
