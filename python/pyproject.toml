@@ -4,10 +4,30 @@ build-backend = "hatchling.build"
 
 [project]
 name = "daq_logging"
+description = "DUNE DAQ Package for Python tools"
+readme = "../docs/README.md"
+requires-python = ">=3.10"
 dynamic = ["version"]
 
 dependencies = [
-    "click==8.1.7"
+    "click==8.1.7",
+    "GitPython==3.1.44",
+    "kafka-python==2.0.2",
+    "pytz==2024.2",
+    "Jinja2==3.1.4",
+    "rich==13.9.4",
+    "sh==2.1.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "pre-commit",
+    "pytest",
+    "black",
+    "pytest-cov",
+    "pytest-mock",  # TODO
+    "pytest-mypy"   # TODO
 ]
 
 [project.scripts]
@@ -18,3 +38,66 @@ path = "version.py"
 
 [tool.hatch.packages.find]
 where = ["daq_logging"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "D",    # pydocstyle - checks docstrings are correctly formatted
+    "E",    # pycodestyle - checks PEP8 compliance
+    "F",    # Pyflakes - detects syntax errors, unused imports and variables and function arguments
+    "I",    # isort - import sorting
+    "UP",   # pyupgrade - modern python
+    "RUF",  # ruff-specific rules
+    "ANN",  # flake8-annotations - enforces type annotations and correctly typed variables in function calls
+    "S",    # bandit - security checks
+    "N",    # pep8-naming - naming convention enforcement
+    "ERA",  # eradicate - removes commented out code
+    "B",    # flake8-bugbear - checks for likely bugs, design problems, performance issues, reliability traps, API misuse, and bad practices
+    "C4",   # flake8-comprehensions - clearer comprehensions
+    "A",    # flake8-builtins - detects shadowing of built-in names in code
+    "RET",  # flake8-return - checks return statement issues
+    "T20",  # flake8-print - raises issues with print statements in production code
+    "ISC",  # flake8-implicit-str-concat - raises issues with implicit string concatenation
+    "G",    # flake8-logging-format - raises issues with logging that are not % replaced
+    "TRY",  # tryceratops - automatically detects and fixes type issues
+    "T"     # check for TODOs
+]
+ignore = [
+    "D205",  # D205: Missing docstring in docstring sections
+    "D100",  # D100: Missing docstring in public module
+    "D104"   # D104: Missing docstring in public package
+]
+pydocstyle.convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "D100",     # Missing docstring in public module
+    "D103",     # Missing docstring in public function
+    "D104",     # Missing docstring in public package
+    "S101",     # Use of assert in tests
+    "ANN201",   # Missing return type annotation
+    "ANN002",   # Missing type for *args
+    "ANN003",   # Missing type for **kwargs
+    "ERA001",   # Commented out code. TODO: remove
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py310", "py311", "py312", "py313"]
+skip-magic-trailing-comma = true
+force-exclude = '''
+/(
+    \.git
+  | \.github
+  | \.ruff_cache
+)/
+'''
+
+# [tool.pytest.ini_options]
+# addopts = "-v --mypy -p no:warnings --cov=. --cov-report=html --doctest-modules --ignore=manage.py --ignore=drunc_ui/settings/ --ignore=docs/ --ignore=example_deployment/ --ignore=ers/"
+# DJANGO_SETTINGS_MODULE = "drunc_ui.settings"
+# FAIL_INVALID_TEMPLATE_VARS = true
+# testpaths = ["tests"]
+# norecursedirs = [".git", ".github", "venv", "src"]

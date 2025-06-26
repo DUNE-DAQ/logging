@@ -8,15 +8,15 @@ from rich.console import Console
 from rich.logging import RichHandler
 from rich.text import Text
 
-from daqpython.logging.exceptions import LoggerHandlerError
-from daqpython.logging.formatter import (
+from daq_logging.exceptions import LoggerHandlerError
+from daq_logging.formatter import (
     CONSOLE_THEME,
     DATE_TIME_FORMAT,
     LOG_RECORD_PADDING,
     TIME_ZONE,
     LoggingFormatter,
 )
-from daqpython.logging.levels import get_level_name_from_int
+from daq_logging.levels import get_level_name_from_int
 
 
 def check_parent_handlers(

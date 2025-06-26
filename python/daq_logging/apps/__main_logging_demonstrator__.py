@@ -78,7 +78,7 @@ def main(
     disable_logger_inheritance: bool,
 ) -> None:
     """Demonstrate use of the daq_logging class."""
-    logger_name = "daqpython_logging_demonstrator"
+    logger_name = "logging_demonstrator"
 
     validate_test_configuration(
         logger_name=logger_name,
@@ -89,7 +89,7 @@ def main(
     )
 
     main_logger: logging.Logger = get_daq_logger(
-        logger_name="daqpython_logging_demonstrator",
+        logger_name="logging_demonstrator",
         log_level=log_level,
         use_parent_handlers=not disable_logger_inheritance,
         rich_handler=rich_handler,
@@ -117,13 +117,13 @@ def main(
         "[bold green]markdown[/bold green]!"
     )
     main_logger.warning(
-        "Note: [red] the daqpython.logging.formatter removes markdown-style "
+        "Note: [red] the daq_logging.formatter removes markdown-style "
         "comments from the log record message [/red]."
     )
 
     if child_logger:
         nested_logger: logging.Logger = get_daq_logger(
-            logger_name="daqpython_logging_demonstrator.child",
+            logger_name="logging_demonstrator.child",
             log_level=log_level,
             use_parent_handlers=not disable_logger_inheritance,
             rich_handler=rich_handler,
@@ -151,7 +151,7 @@ def main(
             "[bold green]markdown[/bold green]!"
         )
         nested_logger.warning(
-            "Note: [red] the daqpython.logging.formatter removes markdown-style "
+            "Note: [red] the daq_logging.formatter removes markdown-style "
             "comments from the log record message [/red]."
         )
 

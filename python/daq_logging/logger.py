@@ -4,14 +4,14 @@ import kafka
 import sh
 from rich.traceback import install as rich_traceback_install
 
-from daqpython.logging.exceptions import LoggerSetupError
-from daqpython.logging.handlers import (
+from daq_logging.exceptions import LoggerSetupError
+from daq_logging.handlers import (
     add_file_handler,
     add_rich_handler,
     add_stderr_handler,
     add_stdout_handler,
 )
-from daqpython.logging.utils import log_level_to_int
+from daq_logging.utils import log_level_to_int
 
 
 def validate_setup_configuration(

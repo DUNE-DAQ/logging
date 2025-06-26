@@ -8,10 +8,10 @@ from pathlib import Path
 from pytz import UnknownTimeZoneError, timezone
 from rich.theme import Theme
 
-from daqpython.logging.exceptions import LoggerConfigurationError
+from daq_logging.exceptions import LoggerConfigurationError
 
-DAQPYTHON_LOGGING_ROOT = Path(os.path.abspath(__file__)).parent
-CONFIGURATION_FILE = DAQPYTHON_LOGGING_ROOT / "log_format.ini"
+DAQ_LOGGING_ROOT = Path(os.path.abspath(__file__)).parent
+CONFIGURATION_FILE = DAQ_LOGGING_ROOT / "log_format.ini"
 CONFIG: configparser.ConfigParser = configparser.ConfigParser()
 if not CONFIG.read(CONFIGURATION_FILE):
     err_msg = (

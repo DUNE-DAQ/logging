@@ -1,5 +1,5 @@
-from daqpython.logging.exceptions import LogLevelError
-from daqpython.logging.levels import (
+from daq_logging.exceptions import LogLevelError
+from daq_logging.levels import (
     logging_log_levels,
     oks_log_levels,
     oks_to_logging_map,
