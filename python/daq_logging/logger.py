@@ -11,7 +11,6 @@ from daq_logging.handlers import (
     add_stderr_handler,
     add_stdout_handler,
 )
-from daq_logging.utils import log_level_to_int
 
 
 def validate_setup_configuration(
@@ -62,7 +61,6 @@ def get_daq_logger(
     validate_setup_configuration(
         logger_name, rich_handler, stream_stdout_handler, stream_stderr_handler
     )
-    log_level = log_level_to_int(log_level)
 
     root_logger_name: str = logger_name
     logger: logging.Logger = setup_root_logger(name=root_logger_name, level=log_level)

@@ -4,7 +4,7 @@ import click
 from rich.traceback import install as rich_traceback_install
 
 from daq_logging.exceptions import LoggerSetupError
-from daq_logging.levels import logging_log_levels as log_levels
+from daq_logging.levels import log_levels
 from daq_logging.logger import get_daq_logger
 
 
