@@ -1,7 +1,7 @@
 import re
 
 
-def get_version_from_cmake(cmake_file="CMakeLists.txt"):
+def get_version_from_cmake(cmake_file="../CMakeLists.txt"):
     with open(cmake_file) as f:
         for line in f:
             m = re.match(
@@ -13,5 +13,5 @@ def get_version_from_cmake(cmake_file="CMakeLists.txt"):
 
 if __name__ == "__main__":
     version = get_version_from_cmake()
-    with open("._version.py", "w") as f:
+    with open("version.py", "w") as f:
         f.write(f'__version__ = "{version}"\n')

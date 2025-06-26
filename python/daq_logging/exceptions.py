@@ -1,6 +1,6 @@
 import logging
 
-from daqpython.logging.levels import log_level_keys, log_level_values
+from daq_logging.levels import log_level_keys, log_level_values
 
 
 class LogLevelError(Exception):
