@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "daq_logging"
+description = "DUNE DAQ Package for Python tools"
+readme = "docs/README.md"
+requires-python = ">=3.10"
+dynamic = ["version"]
+
+dependencies = [
+    "click==8.1.7"
+]
+
+[project.scripts]
+python_logging_demonstrator = "daq_logging.apps.__main_logging_demonstrator__:main"
+
+[tool.hatch.version]
+path = "._version.py"
+
+[tool.hatch.packages.find]
+where = ["python"]
