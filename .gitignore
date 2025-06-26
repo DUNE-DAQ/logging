@@ -1,7 +1,6 @@
 *.~[0-9]*~
 python/daq_logging/__pycache__/
-python/daq_logging/src/
-python/daq_logging/__pycache__
+python/daq_logging/*/__pycache__*
 .vscode
 *~
 python/daq_logging/*.egg-info
