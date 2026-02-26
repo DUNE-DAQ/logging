@@ -70,7 +70,11 @@ int main(/*int argc, char *argv[]*/)
 	// FOR THIS EXAMPLE ONLY -- NOT NORMALLY NEEDED!! --v--v--v--v--v--v
 	// activate TRACE memory buffer for debugging
 	std::string tfile="/tmp/trace_buffer_"+std::string(getenv("USER"))+"_basic";
-	system( ("rm -f "+tfile).c_str() );
+	int ret= system( ("rm -f "+tfile).c_str() );
+	if (ret != 0) {
+	  std::cerr << "Error with system(rm -f"+tfile << '\n';
+	  return (1);
+	}
 	setenv("TRACE_FILE",tfile.c_str(),0);
 	setenv("TRACE_LVLM","-1",0);
 	setenv("TRACE_LVLS","0xff",0);
@@ -120,7 +124,11 @@ int main(/*int argc, char *argv[]*/)
 	TLOG_DEBUG(64) << "debug lvl 64";
 
 	TLOG() << "\ntshow follows:\n\n";
-	system( "TRACE_TIME_FMT='%Y-%b-%d %H:%M:%S,%%03d' TRACE_SHOW='%H%x%N %T %e %l %8L %m' trace_cntl show | trace_delta -ct 1 -d 1" );
+	ret= system( "TRACE_TIME_FMT='%Y-%b-%d %H:%M:%S,%%03d' TRACE_SHOW='%H%x%N %T %e %l %8L %m' trace_cntl show | trace_delta -ct 1 -d 1" );
+	if (ret != 0) {
+	  std::cerr << "Error with system(tshow)\n";
+	  return (1);
+	}
 
 	TLOG() << "\nOne could try the same with DUNEDAQ_ERS_VERBOSITY_LEVEL=2 or 3\n";
 
@@ -138,7 +146,11 @@ int main(/*int argc, char *argv[]*/)
 		threads[uu].join();
 
 	TLOG() << "\ntshow follows:\n\n";
-	system( "TRACE_SHOW='%H%x%N %T %P %i %C %e %3L %R %m' trace_cntl show -c 25 | trace_delta -ct 1 -d 1" );
+	ret= system( "TRACE_SHOW='%H%x%N %T %P %i %C %e %3L %R %m' trace_cntl show -c 25 | trace_delta -ct 1 -d 1" );
+	if (ret != 0) {
+	  std::cerr << "Error with system(tshow)\n";
+	  return (1);
+	}
 
 	throw( appframework::MyExit(ERS_HERE) );
 	return (0);

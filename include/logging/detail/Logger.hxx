@@ -247,9 +247,12 @@ struct erstraceStream : public OutputStream {
 							+ ":" + std::to_string(issp->context().line_number())
 							+ "] " + issp->message();
 					}
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-security"
 					trace(&lclTime, traceID, lvl_, issue.context().line_number(),
 					      issue.context().function_name(),
 					      0 TRACE_XTRA_PASSED, complete_message.c_str());
+#pragma GCC diagnostic pop
 				}
             }
 			chained().write( issue );

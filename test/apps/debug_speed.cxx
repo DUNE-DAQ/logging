@@ -30,7 +30,11 @@ int main(int argc, char *argv[] __attribute__((__unused__)))
 {
 	// activate TRACE memory buffer for debugging
 	std::string tfile="/tmp/trace_buffer_"+std::string(getenv("USER"))+"_debug_speed";
-	system( ("rm -f "+tfile).c_str() );
+	int ret= system( ("rm -f "+tfile).c_str() );
+	if (ret != 0) {
+	  std::cerr << "Error with system(rm)\n";
+	  return (1);
+	}
 	setenv("TRACE_FILE",tfile.c_str(),0);
 
 	static const int dbglvl=1;
@@ -52,7 +56,11 @@ int main(int argc, char *argv[] __attribute__((__unused__)))
 		TLOG_DEBUG(dbglvl) << "message file does not exist";
 	
 	TLOG() << "\ntshow follows:\n\n";
-	system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %e %L %R %m\" trace_cntl show | trace_delta -ct 1 -d 1" );
+	ret= system( "TRACE_SHOW=\"%H%x%N %T %P %i %C %e %L %R %m\" trace_cntl show | trace_delta -ct 1 -d 1" );
+	if (ret != 0) {
+	  std::cerr << "Error with system(tshow)\n";
+	  return (1);
+	}
 
 	return (0);
 }   // main
