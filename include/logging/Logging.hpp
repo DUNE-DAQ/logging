@@ -87,7 +87,7 @@ public:
 			if (lvl>63) lvl=63;
 			//TRACE_CNTL("lvlmskSg",(1ULL<<lvl)-1); // this sets traceTID to id of "Logger"
 			uint64_t msk = ((1ULL<<lvl)-1) | (1ULL<<lvl);
-			std::string mskstr=std::to_string(msk);
+			std::string mskstr=std::to_string(msk) + ",0x0";
 			setenv("TRACE_LVLS",mskstr.c_str(),0);
 		}
 	}
